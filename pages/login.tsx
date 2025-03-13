@@ -1,6 +1,8 @@
-import { signIn } from 'next-auth/react';
-import { FormEvent, useState } from 'react';
+// pages/login.tsx
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
+import { signIn } from 'next-auth/react';
+import NavBar from '../components/NavBar';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -23,21 +25,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Nav Bar */}
-      <header className="bg-white shadow px-4 py-3 flex items-center justify-between">
-        <div className="text-xl font-bold">FreeTheCork</div>
-        <nav>
-          {/* Link to Home */}
-          <Link href="/" className="text-blue-600 hover:underline mr-4">
-            Home
-          </Link>
-          {/* Could add more nav links here if needed */}
-        </nav>
-      </header>
+    <div className="min-h-screen flex flex-col">
+      {/* Reusable NavBar */}
+      <NavBar />
 
-      {/* Main Content: Centered Login Form */}
-      <main className="flex-1 flex items-center justify-center">
+      {/* MAIN CONTENT */}
+      <main className="flex-1 flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 shadow-md rounded w-80">
           <h1 className="text-2xl font-bold mb-6">Login</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,7 +73,11 @@ export default function LoginPage() {
           </div>
         </div>
       </main>
+
+      {/* (Optional) Footer */}
+      <footer className="bg-gray-100 text-center py-4">
+        <p className="text-gray-600">© {new Date().getFullYear()} Free the Cork</p>
+      </footer>
     </div>
   );
 }
-

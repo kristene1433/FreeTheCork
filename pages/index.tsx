@@ -1,53 +1,16 @@
 // pages/index.tsx
-
-import { signIn, signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import Marquee from "../components/Marquee";
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import Marquee from '../components/Marquee';
+import NavBar from '../components/NavBar';
 
 export default function Home() {
   const { data: session } = useSession();
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* NAVBAR */}
-      <nav className="bg-white border-b shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="text-xl font-bold">Free the Cork</div>
-          <div className="flex items-center space-x-4">
-            <Link href="/pricing" className="text-gray-700 hover:underline">
-              Pricing
-            </Link>
-            {session ? (
-              <>
-                <Link href="/dashboard" className="text-gray-700 hover:underline">
-                  Dashboard
-                </Link>
-                <button
-                  className="py-1 px-3 bg-gray-800 text-white rounded hover:bg-gray-700"
-                  onClick={() => signOut()}
-                >
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="py-1 px-3 bg-gray-800 text-white rounded hover:bg-gray-700"
-                  onClick={() => signIn()}
-                >
-                  Sign In
-                </button>
-                <Link
-                  href="/signup"
-                  className="py-1 px-3 bg-blue-600 text-white rounded hover:bg-blue-500"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      {/* Reusable NavBar */}
+      <NavBar />
 
       {/* MAIN CONTENT */}
       <main className="flex-1 container mx-auto px-4 py-10">
@@ -62,12 +25,13 @@ export default function Home() {
           <div className="mt-6">
             <p className="mb-2">Ready to begin your wine journey?</p>
             <div className="space-x-2">
-              <button
+              {/* These buttons are just shortcuts, but the NavBar also has them */}
+              <Link
+                href="/login"
                 className="py-2 px-4 bg-gray-800 text-white rounded hover:bg-gray-700"
-                onClick={() => signIn()}
               >
                 Sign In
-              </button>
+              </Link>
               <Link
                 href="/signup"
                 className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-500"
@@ -93,8 +57,8 @@ export default function Home() {
           <Marquee
             images={[
               "/images/ChateauD'YquemSauternes2016.jpg",
-              "/images/GrahamsVintagePort2020.jpg",
-              "/images/OsbornePedroXimenez.jpg",
+              '/images/GrahamsVintagePort2020.jpg',
+              '/images/OsbornePedroXimenez.jpg',
             ]}
           />
         </div>
