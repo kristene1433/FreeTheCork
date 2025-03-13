@@ -1,5 +1,3 @@
-// pages/upgrade.tsx
-
 import { useEffect, useState, FormEvent } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -15,21 +13,9 @@ export default function UpgradePage() {
     }
   }, [status]);
 
-  const [plan, setPlan] = useState<'basic' | 'premium'>('basic');
-
-  // Payment fields (demo only)
-  const [cardNumber, setCardNumber] = useState('');
-  const [expDate, setExpDate] = useState('');
-  const [cvc, setCvc] = useState('');
-
-  // On first load, set plan based on user's current membership
-  useEffect(() => {
-    if (session?.user?.membership === 'premium') {
-      setPlan('premium');
-    } else {
-      setPlan('basic');
-    }
-  }, [session]);
+  // We read the user's current membership to decide which radio button is checked
+  const currentMembership = session?.user?.membership || 'basic';
+  const [plan, setPlan] = useState<'basic' | 'premium'>(currentMembership === 'premium' ? 'premium' : 'basic');
 
   if (status === 'loading') {
     return (
@@ -50,23 +36,40 @@ export default function UpgradePage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    // In production, you'd handle real payment with Stripe or similar.
-    try {
-      const res = await fetch('/api/account/upgrade', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          newPlan: plan,
-          // cardNumber, expDate, cvc (demo only – not actually used server-side)
-        }),
-      });
 
-      const data = await res.json();
-      if (res.ok) {
-        alert(`Plan updated to ${data.membership}!`);
+    // If user selected Basic, we'll downgrade (or keep) them to basic
+    // If user selected Premium, we redirect them to Stripe checkout
+    try {
+      if (plan === 'basic') {
+        // 1) Downgrade to basic
+        const res = await fetch('/api/account/upgrade', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newPlan: 'basic' }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || 'Error updating plan');
+          return;
+        }
+
+        alert(`You are now on the Basic plan.`);
         router.push('/dashboard');
       } else {
-        alert(data.error || 'Error updating plan');
+        // 2) If plan = 'premium', create a Stripe checkout session
+        const checkoutRes = await fetch('/api/stripe/create-checkout-session', {
+          method: 'POST',
+        });
+
+        const checkoutData = await checkoutRes.json();
+        if (!checkoutRes.ok || !checkoutData.url) {
+          alert(checkoutData.error || 'Error creating checkout session');
+          return;
+        }
+
+        // Redirect to Stripe payment page
+        window.location.href = checkoutData.url;
       }
     } catch (err) {
       console.error(err);
@@ -115,52 +118,19 @@ export default function UpgradePage() {
               <label htmlFor="premium" className="ml-2">Premium ($9.99/month)</label>
             </div>
             <p className="ml-6 text-sm text-gray-600">
-              Unlimited AI queries, personalized wine preferences.
+              Unlimited queries, personalized preferences, and more.
             </p>
           </div>
 
-          {/* RIGHT COLUMN: Payment info if premium */}
+          {/* RIGHT COLUMN: Explanation / Payment Info */}
           <div className="w-1/2 pl-8">
             <h2 className="text-lg font-semibold mb-4">Payment Info</h2>
 
             {plan === 'premium' ? (
-              <>
-                <div>
-                  <label className="block font-semibold mb-1">Card Number</label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                  />
-                </div>
-                <div className="flex space-x-2 mt-4">
-                  <div className="flex-1">
-                    <label className="block font-semibold mb-1">Expiration (MM/YY)</label>
-                    <input
-                      type="text"
-                      required
-                      className="w-full border border-gray-300 rounded px-3 py-2"
-                      value={expDate}
-                      onChange={(e) => setExpDate(e.target.value)}
-                    />
-                  </div>
-                  <div className="w-20">
-                    <label className="block font-semibold mb-1">CVC</label>
-                    <input
-                      type="text"
-                      required
-                      className="w-full border border-gray-300 rounded px-3 py-2"
-                      value={cvc}
-                      onChange={(e) => setCvc(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  (Demo only—use a secure payment provider in production.)
-                </p>
-              </>
+              <p className="text-sm text-gray-700">
+                Upon submission, you’ll be redirected to our secure Stripe checkout.
+                No payment data is collected here.
+              </p>
             ) : (
               <p className="text-sm text-gray-600">
                 No payment required for Basic (Free) plan.
