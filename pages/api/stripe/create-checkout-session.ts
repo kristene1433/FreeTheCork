@@ -1,4 +1,3 @@
-// pages/api/stripe/create-checkout-session.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
@@ -11,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Replace with your real Price ID from Stripe dashboard
+    // Replace with your actual Price ID from the Stripe Dashboard
     const priceId = 'price_1R2H24G3CmMC7BS0Z0cst8Jy';
 
     const session = await stripe.checkout.sessions.create({
@@ -24,7 +23,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       ],
       success_url: `${process.env.NEXTAUTH_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/plan`,
+      // This is where user is taken if they cancel or exit payment
+      cancel_url: `${process.env.NEXTAUTH_URL}/cancelled`,
     });
 
     return res.status(200).json({ url: session.url });

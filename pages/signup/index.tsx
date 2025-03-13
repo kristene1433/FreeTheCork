@@ -23,19 +23,21 @@ export default function SignupPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    // Basic password check
+    // Basic password match check
     if (password !== confirm) {
       alert('Passwords do not match!');
       return;
     }
 
-    // 1) Create user in DB
-    const response = await fetch('/api/auth/register', {
+    // 1) Register user in DB
+    //    We'll set membership='basic' on the server side by default
+    const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email,
         password,
+        // We can pass the plan, but server should default membership to 'basic' in DB
         plan,
         fullName: `${firstName} ${lastName}`,
         address,
@@ -45,21 +47,20 @@ export default function SignupPage() {
       }),
     });
 
-    const data = await response.json();
-    if (!response.ok) {
+    const data = await res.json();
+    if (!res.ok) {
       alert(data.error || 'Registration failed');
       return;
     }
 
-    // 2) If user chose Basic, go straight to dashboard
+    // 2) If they chose 'basic', done—go to dashboard
     if (plan === 'basic') {
       alert('Signup complete! Welcome to the Basic plan.');
       router.push('/dashboard');
       return;
     }
 
-    // 3) If user chose Premium, create a Stripe Checkout session
-    //    and redirect them to pay
+    // 3) If Premium, create a Stripe Checkout Session and redirect
     try {
       const checkoutRes = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
@@ -79,7 +80,6 @@ export default function SignupPage() {
   }
 
   function handleCancel() {
-    // If user cancels, go back to home
     router.push('/');
   }
 
@@ -217,7 +217,7 @@ export default function SignupPage() {
             </div>
           </div>
 
-          {/* Buttons at the bottom center */}
+          {/* Buttons */}
           <div className="flex items-center justify-center space-x-4 pt-4">
             <button
               type="submit"
