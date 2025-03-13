@@ -20,11 +20,6 @@ export default function SignupPage() {
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
 
-  // Payment info (demo only)
-  const [cardNumber, setCardNumber] = useState('');
-  const [expDate, setExpDate] = useState('');
-  const [cvc, setCvc] = useState('');
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -34,7 +29,7 @@ export default function SignupPage() {
       return;
     }
 
-    // Call register API
+    // 1) Create user in DB
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -47,25 +42,44 @@ export default function SignupPage() {
         city,
         state,
         zip,
-        // Payment data not stored in DB. Demonstration only!
-        cardNumber,
-        expDate,
-        cvc,
       }),
     });
 
     const data = await response.json();
-    if (response.ok) {
-      alert('Signup complete!');
-      // Go to dashboard (user must log in or be auto-logged if you want)
-      router.push('/dashboard');
-    } else {
+    if (!response.ok) {
       alert(data.error || 'Registration failed');
+      return;
+    }
+
+    // 2) If user chose Basic, go straight to dashboard
+    if (plan === 'basic') {
+      alert('Signup complete! Welcome to the Basic plan.');
+      router.push('/dashboard');
+      return;
+    }
+
+    // 3) If user chose Premium, create a Stripe Checkout session
+    //    and redirect them to pay
+    try {
+      const checkoutRes = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+      });
+      const checkoutData = await checkoutRes.json();
+
+      if (checkoutData.url) {
+        // Redirect to Stripe's hosted payment page
+        window.location.href = checkoutData.url;
+      } else {
+        alert('Error creating checkout session');
+      }
+    } catch (err) {
+      console.error('Checkout session error:', err);
+      alert('Network/server error creating checkout session');
     }
   }
 
   function handleCancel() {
-    // If user cancels, go back to home page
+    // If user cancels, go back to home
     router.push('/');
   }
 
@@ -202,50 +216,6 @@ export default function SignupPage() {
               />
             </div>
           </div>
-
-          {/* Payment fields if Premium */}
-          {plan === 'premium' && (
-            <div className="border-t pt-4 mt-4">
-              <h3 className="text-lg font-semibold mb-2">Payment Method</h3>
-              <div>
-                <label className="block font-semibold mb-1">Card Number</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                />
-              </div>
-              <div className="flex space-x-2 mt-2">
-                <div className="flex-1">
-                  <label className="block font-semibold mb-1">
-                    Expiration (MM/YY)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                    value={expDate}
-                    onChange={(e) => setExpDate(e.target.value)}
-                  />
-                </div>
-                <div className="w-20">
-                  <label className="block font-semibold mb-1">CVC</label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full border border-gray-300 rounded px-3 py-2"
-                    value={cvc}
-                    onChange={(e) => setCvc(e.target.value)}
-                  />
-                </div>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">
-                (Demo only—do not store real card data. Use a secure payment provider!)
-              </p>
-            </div>
-          )}
 
           {/* Buttons at the bottom center */}
           <div className="flex items-center justify-center space-x-4 pt-4">
