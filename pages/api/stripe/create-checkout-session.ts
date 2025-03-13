@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Replace with your real Price ID from Stripe dashboard
-    const priceId = 'prod_Rw9KVCnCUEfsuG';
+    const priceId = 'price_1R2H24G3CmMC7BS0Z0cst8Jy';
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
