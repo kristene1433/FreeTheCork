@@ -1,4 +1,3 @@
-// components/NavBar.tsx
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -8,8 +7,10 @@ export default function NavBar() {
   return (
     <nav className="bg-white border-b shadow-sm">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo or Site Name */}
-        <div className="text-xl font-bold">Free the Cork</div>
+        {/* Wrap your site name in a Link to "/" */}
+        <Link href="/" className="text-xl font-bold hover:underline">
+          Free the Cork
+        </Link>
 
         {/* Nav Links and Auth Buttons */}
         <div className="flex items-center space-x-4">
