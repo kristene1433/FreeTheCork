@@ -32,53 +32,53 @@ export default function Home() {
         </div>
 
         {/* Three-feature section */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 my-12 text-center">
-          {/* Local Wine Events */}
-          <div className="rounded-lg shadow-xl overflow-hidden">
-            <Image 
-              src="/images/local-wine-events.jpg" 
-              alt="Local Wine Events" 
-              width={400} 
-              height={250} 
-              className="w-full h-auto" 
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12 text-center items-stretch">
+          {/* Card 1 */}
+          <div className="bg-white rounded-lg shadow flex flex-col overflow-hidden">
+            <Image
+              src="/images/local-wine-events.jpg"
+              alt="Local Wine Events"
+              width={400}
+              height={250}
+              className="w-full h-48 object-cover"
             />
-            <div className="p-6 bg-gray-50">
-              <h3 className="text-2xl font-semibold">Discover Local Wine Events</h3>
-              <p className="text-gray-600 mt-2">
+            <div className="p-6 bg-gray-50 flex-1 flex flex-col justify-between">
+              <h3 className="text-xl font-semibold mb-2">Discover Local Wine Events</h3>
+              <p className="text-gray-600">
                 Stay updated on tastings, festivals, and wine events happening in your community.
               </p>
             </div>
           </div>
 
-          {/* Food & Wine Pairing Advice */}
-          <div className="rounded-lg shadow-xl overflow-hidden">
-            <Image 
-              src="/images/food-wine-pairing.jpg" 
-              alt="Food & Wine Pairing" 
-              width={400} 
+          {/* Card 2 */}
+          <div className="bg-white rounded-lg shadow flex flex-col overflow-hidden">
+            <Image
+              src="/images/food-wine-pairing.jpg"
+              alt="Food & Wine Pairing"
+              width={400}
               height={250}
-              className="w-full h-auto" 
+              className="w-full h-48 object-cover"
             />
-            <div className="p-6 bg-gray-50">
-              <h3 className="text-2xl font-semibold">Perfect Food & Wine Pairings</h3>
-              <p className="text-gray-600 mt-2">
+            <div className="p-6 bg-gray-50 flex-1 flex flex-col justify-between">
+              <h3 className="text-xl font-semibold mb-2">Perfect Food & Wine Pairings</h3>
+              <p className="text-gray-600">
                 Receive expert suggestions for pairing wines perfectly with your favorite dishes.
               </p>
             </div>
           </div>
 
-          {/* Wine Price Comparisons */}
-          <div className="rounded-lg shadow-xl overflow-hidden">
-            <Image 
-              src="/images/wine-price-comparison.jpg" 
-              alt="Wine Price Comparison" 
-              width={400} 
+          {/* Card 3 */}
+          <div className="bg-white rounded-lg shadow flex flex-col overflow-hidden">
+            <Image
+              src="/images/wine-price-comparison.jpg"
+              alt="Wine Price Comparison"
+              width={400}
               height={250}
-              className="w-full h-auto" 
+              className="w-full h-48 object-cover"
             />
-            <div className="p-6 bg-gray-50">
-              <h3 className="text-2xl font-semibold">Wine Price Comparisons</h3>
-              <p className="text-gray-600 mt-2">
+            <div className="p-6 bg-gray-50 flex-1 flex flex-col justify-between">
+              <h3 className="text-xl font-semibold mb-2">Wine Price Comparisons</h3>
+              <p className="text-gray-600">
                 Compare prices and discover the best deals on your favorite wines.
               </p>
             </div>
