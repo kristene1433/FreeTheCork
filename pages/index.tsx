@@ -149,7 +149,7 @@ export default function Home() {
         <div className="my-8">
           <Marquee
             images={[
-              \"/images/ChateauD'YquemSauternes2016.jpg\",
+              "/images/ChateauD'YquemSauternes2016.jpg",
               '/images/GrahamsVintagePort2020.jpg',
               '/images/OsbornePedroXimenez.jpg',
             ]}
