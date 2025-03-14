@@ -6,7 +6,7 @@ export default function PricingPage() {
   const { data: session } = useSession();
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-200 min-h-screen">
       <NavBar />
 
       <main className="container mx-auto px-4 py-12">
@@ -20,7 +20,7 @@ export default function PricingPage() {
           <div className="bg-white shadow-xl rounded-lg p-8 flex flex-col">
             <h2 className="text-2xl font-semibold text-center mb-2">Basic</h2>
             <p className="text-3xl font-bold text-center mb-6">
-              $0 <span className="text-sm font-normal">/ month</span>
+              Free
             </p>
             <ul className="text-gray-600 mb-8 flex-grow list-disc pl-5 space-y-2">
               <li>5 AI queries per day</li>
