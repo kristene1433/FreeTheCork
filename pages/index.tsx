@@ -13,7 +13,8 @@ export default function Home() {
   const wordsRowTwo = ['Wine Journal', 'Curated Experiences', 'Expert Sommeliers', 'Membership Perks'];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    // 1) Added a light gray background to the entire page
+    <div className="bg-gray-50 min-h-screen flex flex-col">
       <NavBar />
 
       <main className="flex-1 container mx-auto px-4 py-12">
@@ -31,9 +32,9 @@ export default function Home() {
           <TextMarquee words={wordsRowTwo} direction="right" />
         </div>
 
-        {/* Three-feature section */}
+        {/* 2) Three-feature section (smaller boxes, uniform alignment) */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12 text-center items-stretch">
-          {/* Card 1 */}
+          {/* Card 1: Local Wine Events */}
           <div className="bg-white rounded-lg shadow flex flex-col overflow-hidden">
             <Image
               src="/images/local-wine-events.jpg"
@@ -50,7 +51,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Card 2 */}
+          {/* Card 2: Food & Wine Pairing */}
           <div className="bg-white rounded-lg shadow flex flex-col overflow-hidden">
             <Image
               src="/images/food-wine-pairing.jpg"
@@ -67,7 +68,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Card 3 */}
+          {/* Card 3: Wine Price Comparison */}
           <div className="bg-white rounded-lg shadow flex flex-col overflow-hidden">
             <Image
               src="/images/wine-price-comparison.jpg"
@@ -121,17 +122,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Sign-in/Sign-up or Dashboard Link */}
+        {/* User Sign-in/Sign-up or Dashboard */}
         {!session ? (
           <section className="text-center my-12">
             <h3 className="text-3xl font-semibold text-gray-800">Start Your Wine Adventure Today!</h3>
             <p className="text-gray-600 my-4">
               Join now to begin exploring wine recommendations tailored just for you.
             </p>
-            <Link
-              href="/signup"
-              className="py-2 px-6 bg-green-600 text-white rounded hover:bg-green-500"
-            >
+            <Link href="/signup" className="py-2 px-6 bg-green-600 text-white rounded hover:bg-green-500">
               Get Started
             </Link>
           </section>
@@ -147,11 +145,11 @@ export default function Home() {
           </section>
         )}
 
-        {/* Existing Image Marquee */}
+        {/* Image Marquee */}
         <div className="my-8">
           <Marquee
             images={[
-              "/images/ChateauD'YquemSauternes2016.jpg",
+              \"/images/ChateauD'YquemSauternes2016.jpg\",
               '/images/GrahamsVintagePort2020.jpg',
               '/images/OsbornePedroXimenez.jpg',
             ]}
@@ -195,6 +193,7 @@ export default function Home() {
         </section>
       </main>
 
+      {/* Footer */}
       <footer className="bg-gray-200 text-center py-4">
         <p className="text-gray-600">© {new Date().getFullYear()} Free the Cork</p>
       </footer>
