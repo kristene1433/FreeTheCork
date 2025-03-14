@@ -83,7 +83,7 @@ export default function UpgradePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gray-200 flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-4xl rounded shadow-md p-8">
         <h1 className="text-2xl font-bold mb-6">Manage Your Plan</h1>
         <form onSubmit={handleSubmit} className="flex">

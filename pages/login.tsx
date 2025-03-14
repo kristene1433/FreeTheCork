@@ -25,7 +25,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="bg-gray-200 min-h-screen">
       {/* Reusable NavBar */}
       <NavBar />
 

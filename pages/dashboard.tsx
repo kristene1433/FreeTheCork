@@ -96,7 +96,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center">
+    <div className="min-h-screen bg-gray-200 flex flex-col items-center">
       {/* Header */}
       <header className="bg-white shadow w-full">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
