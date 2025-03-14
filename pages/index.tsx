@@ -13,8 +13,8 @@ export default function Home() {
   const wordsRowTwo = ['Wine Journal', 'Curated Experiences', 'Expert Sommeliers', 'Membership Perks'];
 
   return (
-    // 1) Added a light gray background to the entire page
-    <div className="bg-gray-50 min-h-screen flex flex-col">
+    
+    <div className="bg-gray-100 min-h-screen flex flex-col">
       <NavBar />
 
       <main className="flex-1 container mx-auto px-4 py-12">
@@ -32,7 +32,7 @@ export default function Home() {
           <TextMarquee words={wordsRowTwo} direction="right" />
         </div>
 
-        {/* 2) Three-feature section (smaller boxes, uniform alignment) */}
+        {/* 2) Three-feature section (uniform alignment, full images) */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12 text-center items-stretch">
           {/* Card 1: Local Wine Events */}
           <div className="bg-white rounded-lg shadow flex flex-col overflow-hidden">
@@ -41,7 +41,7 @@ export default function Home() {
               alt="Local Wine Events"
               width={400}
               height={250}
-              className="w-full h-48 object-cover"
+              className="w-full h-48 object-contain"
             />
             <div className="p-6 bg-gray-50 flex-1 flex flex-col justify-between">
               <h3 className="text-xl font-semibold mb-2">Discover Local Wine Events</h3>
@@ -58,7 +58,7 @@ export default function Home() {
               alt="Food & Wine Pairing"
               width={400}
               height={250}
-              className="w-full h-48 object-cover"
+              className="w-full h-48 object-contain"
             />
             <div className="p-6 bg-gray-50 flex-1 flex flex-col justify-between">
               <h3 className="text-xl font-semibold mb-2">Perfect Food & Wine Pairings</h3>
@@ -75,7 +75,7 @@ export default function Home() {
               alt="Wine Price Comparison"
               width={400}
               height={250}
-              className="w-full h-48 object-cover"
+              className="w-full h-48 object-contain"
             />
             <div className="p-6 bg-gray-50 flex-1 flex flex-col justify-between">
               <h3 className="text-xl font-semibold mb-2">Wine Price Comparisons</h3>
