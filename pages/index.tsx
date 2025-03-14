@@ -1,9 +1,9 @@
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import NavBar from '../components/NavBar';
 import TextMarquee from '../components/TextMarquee';
 import Marquee from '../components/Marquee';
 import Image from 'next/image';
+
 
 export default function Home() {
   const { data: session } = useSession();
@@ -15,7 +15,6 @@ export default function Home() {
   return (
     
     <div className="bg-gray-200 min-h-screen flex flex-col">
-      <NavBar />
 
       <main className="flex-1 container mx-auto px-4 py-12">
         {/* Headline */}
@@ -192,11 +191,6 @@ export default function Home() {
           </Link>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-200 text-center py-4">
-        <p className="text-gray-600">© {new Date().getFullYear()} Free the Cork</p>
-      </footer>
     </div>
   );
 }

@@ -1,13 +1,11 @@
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import NavBar from '../components/NavBar';
 
 export default function PricingPage() {
   const { data: session } = useSession();
 
   return (
     <div className="bg-gray-200 min-h-screen">
-      <NavBar />
 
       <main className="container mx-auto px-4 py-12">
         <h1 className="text-4xl font-bold text-center mb-4">Pricing</h1>

@@ -2,7 +2,6 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
-import NavBar from '../components/NavBar';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -26,8 +25,6 @@ export default function LoginPage() {
 
   return (
     <div className="bg-gray-200 min-h-screen">
-      {/* Reusable NavBar */}
-      <NavBar />
 
       {/* MAIN CONTENT */}
       <main className="flex-1 flex items-center justify-center bg-gray-50">
