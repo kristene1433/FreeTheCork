@@ -8,6 +8,7 @@ import Image from 'next/image';
 export default function Home() {
   const { data: session } = useSession();
 
+  // Words for the two text marquees
   const wordsRowOne = ['Exclusive Wines', 'Tailored Pairings', 'Personalized Advice', 'Local Recommendations'];
   const wordsRowTwo = ['Wine Journal', 'Curated Experiences', 'Expert Sommeliers', 'Membership Perks'];
 
@@ -16,6 +17,7 @@ export default function Home() {
       <NavBar />
 
       <main className="flex-1 container mx-auto px-4 py-12">
+        {/* Headline */}
         <h1 className="text-5xl font-bold text-center mb-4">
           Uncork Your Personalized Wine Journey
         </h1>
@@ -26,9 +28,62 @@ export default function Home() {
         {/* Text Marquees */}
         <div className="my-8">
           <TextMarquee words={wordsRowOne} direction="left" />
-          {/*<TextMarquee words={wordsRowOne} direction="right" />*/}
-          
+          <TextMarquee words={wordsRowTwo} direction="right" />
         </div>
+
+        {/* Three-feature section */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 my-12 text-center">
+          {/* Local Wine Events */}
+          <div className="rounded-lg shadow-xl overflow-hidden">
+            <Image 
+              src="/images/local-wine-events.jpg" 
+              alt="Local Wine Events" 
+              width={400} 
+              height={250} 
+              className="w-full h-auto" 
+            />
+            <div className="p-6 bg-gray-50">
+              <h3 className="text-2xl font-semibold">Discover Local Wine Events</h3>
+              <p className="text-gray-600 mt-2">
+                Stay updated on tastings, festivals, and wine events happening in your community.
+              </p>
+            </div>
+          </div>
+
+          {/* Food & Wine Pairing Advice */}
+          <div className="rounded-lg shadow-xl overflow-hidden">
+            <Image 
+              src="/images/food-wine-pairing.jpg" 
+              alt="Food & Wine Pairing" 
+              width={400} 
+              height={250}
+              className="w-full h-auto" 
+            />
+            <div className="p-6 bg-gray-50">
+              <h3 className="text-2xl font-semibold">Perfect Food & Wine Pairings</h3>
+              <p className="text-gray-600 mt-2">
+                Receive expert suggestions for pairing wines perfectly with your favorite dishes.
+              </p>
+            </div>
+          </div>
+
+          {/* Wine Price Comparisons */}
+          <div className="rounded-lg shadow-xl overflow-hidden">
+            <Image 
+              src="/images/wine-price-comparison.jpg" 
+              alt="Wine Price Comparison" 
+              width={400} 
+              height={250}
+              className="w-full h-auto" 
+            />
+            <div className="p-6 bg-gray-50">
+              <h3 className="text-2xl font-semibold">Wine Price Comparisons</h3>
+              <p className="text-gray-600 mt-2">
+                Compare prices and discover the best deals on your favorite wines.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* Membership Plans Section */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
@@ -40,7 +95,6 @@ export default function Home() {
             </p>
             <ul className="mt-4 text-left text-gray-700 space-y-2">
               <li>🍷 Basic wine pairings</li>
-              <li>📍 Local wine availability checks</li>
               <li>💡 General sommelier advice</li>
             </ul>
             <Link href="/signup" className="mt-6 py-2 px-6 bg-gray-800 text-white rounded hover:bg-gray-700">
@@ -67,31 +121,41 @@ export default function Home() {
           </div>
         </section>
 
-        {/* User Sign-in/Sign-up or Dashboard */}
+        {/* Sign-in/Sign-up or Dashboard Link */}
         {!session ? (
           <section className="text-center my-12">
             <h3 className="text-3xl font-semibold text-gray-800">Start Your Wine Adventure Today!</h3>
-            <p className="text-gray-600 my-4">Join now to begin exploring wine recommendations tailored just for you.</p>
-            <Link href="/signup" className="py-2 px-6 bg-green-600 text-white rounded hover:bg-green-500">
+            <p className="text-gray-600 my-4">
+              Join now to begin exploring wine recommendations tailored just for you.
+            </p>
+            <Link
+              href="/signup"
+              className="py-2 px-6 bg-green-600 text-white rounded hover:bg-green-500"
+            >
               Get Started
             </Link>
           </section>
         ) : (
           <section className="text-center my-12">
             <h3 className="text-3xl font-semibold text-gray-800">Welcome back, wine lover!</h3>
-            <Link href="/dashboard" className="mt-4 py-2 px-6 bg-green-600 text-white rounded hover:bg-green-500 inline-block">
+            <Link
+              href="/dashboard"
+              className="mt-4 py-2 px-6 bg-green-600 text-white rounded hover:bg-green-500 inline-block"
+            >
               Go to Your Dashboard
             </Link>
           </section>
         )}
 
-        {/* Image Marquee */}
+        {/* Existing Image Marquee */}
         <div className="my-8">
-          <Marquee images={[
-            "/images/ChateauD'YquemSauternes2016.jpg",
-            '/images/GrahamsVintagePort2020.jpg',
-            '/images/OsbornePedroXimenez.jpg',
-          ]}/>
+          <Marquee
+            images={[
+              "/images/ChateauD'YquemSauternes2016.jpg",
+              '/images/GrahamsVintagePort2020.jpg',
+              '/images/OsbornePedroXimenez.jpg',
+            ]}
+          />
         </div>
 
         {/* Informational Banner */}
@@ -99,7 +163,8 @@ export default function Home() {
           <div className="flex-1 mb-4 md:mb-0">
             <h3 className="text-3xl font-semibold text-gray-800 mb-2">Your Digital Wine Journal</h3>
             <p className="text-gray-600">
-              Track your wine experiences, personal ratings, notes, and preferences all in one place—exclusively available to our Personalized Sommelier members.
+              Track your wine experiences, personal ratings, notes, and preferences all in one place—
+              exclusively available to our Personalized Sommelier members.
             </p>
           </div>
           <div className="flex-shrink-0">
@@ -115,15 +180,21 @@ export default function Home() {
 
         {/* Call-to-action */}
         <section className="bg-blue-600 rounded-lg shadow-xl text-center p-8 my-12">
-          <h3 className="text-3xl text-white font-bold">Ready to Personalize Your Wine Experience?</h3>
-          <p className="text-blue-100 my-4">Become a member today and start your journey.</p>
-          <Link href="/pricing" className="py-3 px-8 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100">
+          <h3 className="text-3xl text-white font-bold">
+            Ready to Personalize Your Wine Experience?
+          </h3>
+          <p className="text-blue-100 my-4">
+            Become a member today and start your journey.
+          </p>
+          <Link
+            href="/pricing"
+            className="py-3 px-8 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100"
+          >
             Explore Membership
           </Link>
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="bg-gray-200 text-center py-4">
         <p className="text-gray-600">© {new Date().getFullYear()} Free the Cork</p>
       </footer>

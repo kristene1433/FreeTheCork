@@ -27,9 +27,9 @@
   animation: scroll-left 20s linear infinite;
 }
 
-/*.animate-scroll-right {
+.animate-scroll-right {
   animation: scroll-right 20s linear infinite;
-}*/
+}
 
 /* OPTIONAL GLOBAL STYLES */
 :root {
