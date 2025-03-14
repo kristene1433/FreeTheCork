@@ -2,7 +2,7 @@
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import '../styles/globals.css';
-import Footer from '../components/Footer';
+
 
 export default function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
@@ -14,8 +14,7 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
           <Component {...pageProps} />
         </main>
 
-        {/* Footer at the bottom */}
-        <Footer />
+        
       </div>
     </SessionProvider>
   );
