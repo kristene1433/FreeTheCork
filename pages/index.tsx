@@ -25,8 +25,9 @@ export default function Home() {
 
         {/* Text Marquees */}
         <div className="my-8">
-          <TextMarquee words={wordsRowOne} direction="right" />
-          <TextMarquee words={wordsRowTwo} direction="left" />
+          <TextMarquee words={wordsRowOne} direction="left" />
+          {/*<TextMarquee words={wordsRowOne} direction="right" />*/}
+          
         </div>
 
         {/* Membership Plans Section */}
