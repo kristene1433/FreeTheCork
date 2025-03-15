@@ -1,9 +1,7 @@
 import Link from 'next/link';
-import NavBar from '../components/NavBar';
 import TextMarquee from '../components/TextMarquee';
 import Marquee from '../components/Marquee';
 import Image from 'next/image';
-import Footer from '../components/Footer';
 
 export default function Home() {
   // Removed session usage since not needed
@@ -22,8 +20,7 @@ export default function Home() {
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
-      <NavBar />
-
+      
       <main className="flex-1 container mx-auto px-4 py-12">
         {/* Main Title */}
         <h1 className="text-5xl font-bold text-center mb-4">
@@ -162,7 +159,7 @@ export default function Home() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
