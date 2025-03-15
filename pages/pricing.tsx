@@ -5,7 +5,7 @@ export default function PricingPage() {
   const { data: session } = useSession();
 
   return (
-    <div className="bg-gray-200 min-h-screen">
+    <div className="bg-gray-250 min-h-screen">
 
       <main className="container mx-auto px-4 py-12">
         <h1 className="text-4xl font-bold text-center mb-4">Pricing</h1>

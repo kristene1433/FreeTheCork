@@ -19,7 +19,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
+    <div className="bg-gray-250 min-h-screen flex flex-col">
       
       <main className="flex-1 container mx-auto px-4 py-12">
         {/* Main Title */}
@@ -30,10 +30,18 @@ export default function Home() {
           Expert AI-powered sommelier advice tailored exclusively for you.
         </p>
 
-        {/* Text Marquees */}
-        <div className="my-8">
-          <TextMarquee words={wordsRowOne} direction="left" />
-          <TextMarquee words={wordsRowTwo} direction="right" />
+        {/* Text Marquees - improved contrast and readability */}
+        <div className="my-8 bg-gray-800 rounded-lg shadow py-6 px-4">
+          <TextMarquee 
+            words={wordsRowOne} 
+            direction="left" 
+            className="text-white text-xl font-semibold"
+          />
+          <TextMarquee 
+            words={wordsRowTwo} 
+            direction="right" 
+            className="text-gray-300 text-xl font-semibold mt-4"
+          />
         </div>
 
         {/* Feature Highlights Section (moved above membership plans) */}
@@ -127,22 +135,22 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Wine Journal Section (Informational Banner) */}
-        <section className="bg-gray-100 rounded-lg shadow-lg flex flex-col md:flex-row items-center p-8 my-12">
-          <div className="flex-1 mb-4 md:mb-0">
-            <h3 className="text-3xl font-semibold text-gray-800 mb-2">Your Digital Wine Journal</h3>
-            <p className="text-gray-600">
-              Track your wine experiences, personal ratings, notes, and preferences all in one
-              place—exclusively available to our Personalized Sommelier members.
+        {/* Wine Journal Section (Enhanced Informational Banner) */}
+        <section className="bg-gray-800 rounded-xl shadow-xl flex flex-col md:flex-row items-center justify-between p-10 my-12">
+          <div className="flex-1 text-white md:mr-8">
+            <h3 className="text-3xl font-semibold mb-4">Your Digital Wine Journal</h3>
+            <p className="text-gray-300 text-lg">
+              Track your wine experiences, personal ratings, notes, and preferences—all in one place. <br />
+              Exclusively available to our <span className="font-bold">Personalized Sommelier</span> members.
             </p>
           </div>
           <div className="flex-shrink-0">
             <Image
               src="/images/wine-journal.jpg"
               alt="Wine Journal"
-              width={300}
-              height={200}
-              className="rounded-lg shadow"
+              width={400}
+              height={250}
+              className="rounded-xl shadow-2xl"
             />
           </div>
         </section>
