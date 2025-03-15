@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+//import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import NavBar from '../components/NavBar';
 import TextMarquee from '../components/TextMarquee';
