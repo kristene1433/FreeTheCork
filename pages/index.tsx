@@ -54,7 +54,8 @@ export default function Home() {
                 alt={img}
                 width={400}
                 height={250}
-                className="w-full h-48 object-cover object-center"
+                // Ensures the TOP of the image is always visible
+                className="w-full h-48 object-cover object-top"
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2 text-white text-center">
@@ -81,17 +82,17 @@ export default function Home() {
           {['AI Sommelier', 'Personalized Sommelier'].map((plan, idx) => (
             <div
               key={idx}
-              className="bg-gray-900 shadow-xl rounded-lg p-8 flex flex-col items-center justify-between"
+              className="bg-gray-900 shadow-xl rounded-lg p-8 flex flex-col items-center text-center"
             >
-              <h2 className="text-3xl font-semibold text-white text-center md:text-left">
+              <h2 className="text-3xl font-semibold text-white">
                 {plan}
               </h2>
-              <p className="mt-4 text-gray-300 text-center md:text-left">
+              <p className="mt-4 text-gray-300">
                 {idx === 0
                   ? 'Explore wines, pairings, and personalized recommendations with our powerful AI Sommelier.'
                   : 'Unlock your personal wine expert with detailed taste profiling and exclusive perks.'}
               </p>
-              <ul className="mt-4 text-gray-300 space-y-2 text-left">
+              <ul className="mt-4 text-gray-300 space-y-2">
                 {idx === 0 ? (
                   <>
                     <li>🍷 Personalized wine advice</li>
