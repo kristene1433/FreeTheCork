@@ -2,6 +2,7 @@ import Link from 'next/link';
 import TextMarquee from '../components/TextMarquee';
 import Marquee from '../components/Marquee';
 import Image from 'next/image';
+import NavBar from '../components/NavBar';
 
 export default function Home() {
   const wordsRowOne = [
@@ -19,6 +20,9 @@ export default function Home() {
 
   return (
     <div className="bg-black min-h-screen flex flex-col">
+      <NavBar />
+
+      {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-12">
         {/* Main Title */}
         <h1 className="text-5xl font-bold text-center mb-4 text-white">
