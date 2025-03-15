@@ -25,13 +25,11 @@ export default function SignupPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    // Basic password match check
     if (password !== confirm) {
       alert('Passwords do not match!');
       return;
     }
 
-    // 1) Register user in DB
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -39,7 +37,6 @@ export default function SignupPage() {
         email,
         password,
         plan,
-        // If user selects premium, pass fullName & address details. If basic, these can be empty.
         fullName: plan === 'premium' ? `${firstName} ${lastName}` : '',
         address: plan === 'premium' ? address : '',
         city: plan === 'premium' ? city : '',
@@ -54,14 +51,12 @@ export default function SignupPage() {
       return;
     }
 
-    // 2) If Basic plan, go straight to dashboard
     if (plan === 'basic') {
       alert('Signup complete! Welcome to the Basic plan.');
       router.push('/dashboard');
       return;
     }
 
-    // 3) If Premium, create a Stripe Checkout session & redirect
     try {
       const checkoutRes = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
@@ -69,7 +64,6 @@ export default function SignupPage() {
       const checkoutData = await checkoutRes.json();
 
       if (checkoutData.url) {
-        // Redirect to Stripe's hosted payment page
         window.location.href = checkoutData.url;
       } else {
         alert('Error creating checkout session');
@@ -88,9 +82,9 @@ export default function SignupPage() {
     <div className="bg-black min-h-screen flex flex-col">
       <NavBar />
 
-      {/* Extra padding top to avoid hugging the top */}
-      <main className="pt-12 flex-grow flex items-center justify-center container mx-auto px-4">
-        <div className="bg-white w-full max-w-3xl rounded shadow-md p-8">
+      {/* Add top and bottom padding for extra vertical space */}
+      <main className="container mx-auto px-4 pt-12 pb-12">
+        <div className="mx-auto max-w-3xl bg-white rounded shadow-md p-8">
           <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
