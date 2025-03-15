@@ -3,7 +3,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-
+import NavBar from '../components/NavBar';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,13 +25,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-250">
-      
+    <div className="bg-black min-h-screen flex flex-col">
+      <NavBar />
 
-      {/* MAIN CONTENT */}
       <main className="flex-grow flex items-center justify-center container mx-auto px-4">
         <div className="bg-white p-10 shadow-xl rounded-lg w-full max-w-md">
-          <h1 className="text-3xl font-bold mb-6 text-center">Login to Your Account</h1>
+          <h1 className="text-3xl font-bold mb-6 text-center">
+            Login to Your Account
+          </h1>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block mb-2 font-semibold">Email</label>
@@ -65,16 +66,13 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <p>
               Don&apos;t have an account?{' '}
-                <Link href="/signup" className="text-blue-600 hover:underline">
-                  Register here
-                </Link>
+              <Link href="/signup" className="text-blue-600 hover:underline">
+                Register here
+              </Link>
             </p>
-
           </div>
         </div>
       </main>
-
-      
     </div>
   );
 }
