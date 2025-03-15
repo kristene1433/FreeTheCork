@@ -39,11 +39,12 @@ export default function SignupPage() {
         email,
         password,
         plan,
-        fullName: `${firstName} ${lastName}`,
-        address,
-        city,
-        state,
-        zip,
+        // If user selects premium, pass fullName & address details. If basic, these can be empty.
+        fullName: plan === 'premium' ? `${firstName} ${lastName}` : '',
+        address: plan === 'premium' ? address : '',
+        city: plan === 'premium' ? city : '',
+        state: plan === 'premium' ? state : '',
+        zip: plan === 'premium' ? zip : '',
       }),
     });
 
@@ -53,14 +54,14 @@ export default function SignupPage() {
       return;
     }
 
-    // 2) If Basic plan, done—go to dashboard
+    // 2) If Basic plan, go straight to dashboard
     if (plan === 'basic') {
       alert('Signup complete! Welcome to the Basic plan.');
       router.push('/dashboard');
       return;
     }
 
-    // 3) If Premium, create a Stripe Checkout Session and redirect
+    // 3) If Premium, create a Stripe Checkout session & redirect
     try {
       const checkoutRes = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
@@ -87,9 +88,11 @@ export default function SignupPage() {
     <div className="bg-black min-h-screen flex flex-col">
       <NavBar />
 
-      <main className="flex-grow flex items-center justify-center container mx-auto px-4">
+      {/* Extra padding top to avoid hugging the top */}
+      <main className="pt-12 flex-grow flex items-center justify-center container mx-auto px-4">
         <div className="bg-white w-full max-w-3xl rounded shadow-md p-8">
-          <h1 className="text-2xl font-bold mb-6">Sign Up</h1>
+          <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email & Password */}
             <div>
@@ -154,71 +157,75 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Personal Info */}
-            <div className="flex space-x-2">
-              <div className="flex-1">
-                <label className="block font-semibold mb-1">First Name</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block font-semibold mb-1">Last Name</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Address</label>
-              <input
-                type="text"
-                required
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </div>
-            <div className="flex space-x-2">
-              <div className="flex-1">
-                <label className="block font-semibold mb-1">City</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
-              </div>
-              <div className="w-16">
-                <label className="block font-semibold mb-1">State</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                />
-              </div>
-              <div className="w-24">
-                <label className="block font-semibold mb-1">ZIP</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                  value={zip}
-                  onChange={(e) => setZip(e.target.value)}
-                />
-              </div>
-            </div>
+            {/* Personal Info - only show if 'premium' */}
+            {plan === 'premium' && (
+              <>
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <label className="block font-semibold mb-1">First Name</label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full border border-gray-300 rounded px-3 py-2"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block font-semibold mb-1">Last Name</label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full border border-gray-300 rounded px-3 py-2"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Address</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full border border-gray-300 rounded px-3 py-2"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </div>
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <label className="block font-semibold mb-1">City</label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full border border-gray-300 rounded px-3 py-2"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </div>
+                  <div className="w-16">
+                    <label className="block font-semibold mb-1">State</label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full border border-gray-300 rounded px-3 py-2"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                    />
+                  </div>
+                  <div className="w-24">
+                    <label className="block font-semibold mb-1">ZIP</label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full border border-gray-300 rounded px-3 py-2"
+                      value={zip}
+                      onChange={(e) => setZip(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Buttons */}
             <div className="flex items-center justify-center space-x-4 pt-4">
