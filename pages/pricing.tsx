@@ -1,15 +1,17 @@
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import NavBar from '../components/NavBar';
 
 export default function PricingPage() {
   const { data: session } = useSession();
 
   return (
-    <div className="bg-gray-250 min-h-screen">
+    <div className="bg-black min-h-screen flex flex-col">
+      <NavBar />
 
       <main className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold text-center mb-4">Pricing</h1>
-        <p className="text-gray-700 text-center mb-8">
+        <h1 className="text-4xl font-bold text-center mb-4 text-white">Pricing</h1>
+        <p className="text-gray-300 text-center mb-8">
           Choose a plan that suits your wine journey!
         </p>
 
@@ -18,7 +20,7 @@ export default function PricingPage() {
           <div className="bg-white shadow-xl rounded-lg p-8 flex flex-col">
             <h2 className="text-2xl font-semibold text-center mb-2">Basic</h2>
             <p className="text-3xl font-bold text-center mb-6">
-              $0 <span className="text-sm font-normal">/ month</span>
+              Free <span className="text-sm font-normal">/ month</span>
             </p>
             <ul className="text-gray-600 mb-8 flex-grow list-disc pl-5 space-y-2">
               <li>5 AI queries per day</li>
@@ -49,10 +51,10 @@ export default function PricingPage() {
             </p>
             <ul className="text-gray-600 mb-8 flex-grow list-disc pl-5 space-y-2">
               <li>Unlimited AI wine recommendations</li>
-              <li>Advanced pairing & personalized suggestions</li>
+              <li>Advanced pairing &amp; personalized suggestions</li>
               <li>Exclusive Digital Wine Journal access</li>
               <li>Local wine availability search</li>
-              <li>Expert sommelier insights & curated collections</li>
+              <li>Expert sommelier insights &amp; curated collections</li>
               <li>Priority customer support</li>
               <li>Early access to new features</li>
             </ul>
