@@ -3,8 +3,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,7 +26,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <NavBar />
+      
 
       {/* MAIN CONTENT */}
       <main className="flex-grow flex items-center justify-center container mx-auto px-4">
@@ -75,7 +74,7 @@ export default function LoginPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
