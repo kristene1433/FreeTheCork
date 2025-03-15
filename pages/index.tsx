@@ -30,12 +30,12 @@ export default function Home() {
 
         {/* Text Marquees */}
         <div className="my-8 bg-gray-800 rounded-lg shadow py-6 px-4">
-          <TextMarquee 
+          <TextMarquee
             words={wordsRowOne}
             direction="left"
             className="text-white text-xl font-semibold"
           />
-          <TextMarquee 
+          <TextMarquee
             words={wordsRowTwo}
             direction="right"
             className="text-gray-300 text-xl font-semibold mt-4"
@@ -45,7 +45,10 @@ export default function Home() {
         {/* Feature Highlights Section */}
         <section className="border-t-4 border-gray-600 grid grid-cols-1 md:grid-cols-3 gap-6 my-12 text-center pt-8">
           {['local-wine-events', 'food-wine-pairing', 'wine-price-comparison'].map((img, i) => (
-            <div key={i} className="bg-gray-900 rounded-lg shadow overflow-hidden">
+            <div
+              key={i}
+              className="border-2 border-gray-600 bg-gray-900 rounded-lg shadow overflow-hidden"
+            >
               <Image
                 src={`/images/${img}.jpg`}
                 alt={img}
@@ -54,10 +57,14 @@ export default function Home() {
                 className="w-full h-48 object-cover object-center"
               />
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2 text-white">
-                  {['Discover Local Wine Events', 'Perfect Food & Wine Pairings', 'Wine Price Comparisons'][i]}
+                <h3 className="text-xl font-semibold mb-2 text-white text-center">
+                  {[
+                    'Discover Local Wine Events',
+                    'Perfect Food & Wine Pairings',
+                    'Wine Price Comparisons',
+                  ][i]}
                 </h3>
-                <p className="text-gray-300">
+                <p className="text-gray-300 text-center">
                   {[
                     'Stay updated on tastings, festivals, and wine events in your area.',
                     'Expert suggestions for pairing wines perfectly with your meals.',
@@ -71,16 +78,20 @@ export default function Home() {
 
         {/* Membership Plans */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
-          {["AI Sommelier", "Personalized Sommelier"].map((plan, idx) => (
-            <div key={idx} className="bg-gray-900 shadow-xl rounded-lg p-8 flex flex-col items-center justify-between">
-              <h2 className="text-3xl font-semibold text-white">{plan}</h2>
-              <p className="mt-4 text-gray-300 text-center">
-                {idx === 0 
-                  ? "Explore wines, pairings, and personalized recommendations with our powerful AI Sommelier."
-                  : "Unlock your personal wine expert with detailed taste profiling and exclusive perks."
-                }
+          {['AI Sommelier', 'Personalized Sommelier'].map((plan, idx) => (
+            <div
+              key={idx}
+              className="bg-gray-900 shadow-xl rounded-lg p-8 flex flex-col items-center justify-between"
+            >
+              <h2 className="text-3xl font-semibold text-white text-center md:text-left">
+                {plan}
+              </h2>
+              <p className="mt-4 text-gray-300 text-center md:text-left">
+                {idx === 0
+                  ? 'Explore wines, pairings, and personalized recommendations with our powerful AI Sommelier.'
+                  : 'Unlock your personal wine expert with detailed taste profiling and exclusive perks.'}
               </p>
-              <ul className="mt-4 text-gray-300 space-y-2">
+              <ul className="mt-4 text-gray-300 space-y-2 text-left">
                 {idx === 0 ? (
                   <>
                     <li>🍷 Personalized wine advice</li>
@@ -98,10 +109,10 @@ export default function Home() {
                 )}
               </ul>
               <Link
-                href={idx === 0 ? "/signup" : "/pricing"}
+                href={idx === 0 ? '/signup' : '/pricing'}
                 className="mt-6 py-2 px-6 bg-blue-600 text-white rounded hover:bg-blue-500"
               >
-                {idx === 0 ? "Sign Up Free" : "View Membership"}
+                {idx === 0 ? 'Sign Up Free' : 'View Membership'}
               </Link>
             </div>
           ))}
@@ -109,11 +120,13 @@ export default function Home() {
 
         {/* Wine Journal Section */}
         <section className="bg-gray-800 rounded-xl shadow-xl flex flex-col md:flex-row items-center justify-between p-10 my-12">
-          <div className="text-white md:mr-8">
+          <div className="text-white text-center md:text-left md:mr-8">
             <h3 className="text-3xl font-semibold mb-4">Your Digital Wine Journal</h3>
             <p className="text-gray-300 text-lg">
-              Track your wine experiences, personal ratings, notes, and preferences—all in one place.<br/>
-              Exclusively for <span className="font-bold">Personalized Sommelier</span> members.
+              Track your wine experiences, personal ratings, notes, and preferences—all in one place.
+              <br />
+              Exclusively for{' '}
+              <span className="font-bold">Personalized Sommelier</span> members.
             </p>
           </div>
           <Image
@@ -121,13 +134,19 @@ export default function Home() {
             alt="Wine Journal"
             width={400}
             height={250}
-            className="rounded-xl shadow-2xl"
+            className="rounded-xl shadow-2xl mt-6 md:mt-0"
           />
         </section>
 
         {/* Image Marquee */}
         <div className="my-8">
-          <Marquee images={["/images/ChateauD'YquemSauternes2016.jpg", "/images/GrahamsVintagePort2020.jpg", "/images/OsbornePedroXimenez.jpg"]}/>
+          <Marquee
+            images={[
+              "/images/ChateauD'YquemSauternes2016.jpg",
+              '/images/GrahamsVintagePort2020.jpg',
+              '/images/OsbornePedroXimenez.jpg',
+            ]}
+          />
         </div>
       </main>
     </div>
