@@ -20,7 +20,7 @@ export default function PricingPage() {
           <div className="bg-white shadow-xl rounded-lg p-8 flex flex-col">
             <h2 className="text-2xl font-semibold text-center mb-2">Basic</h2>
             <p className="text-3xl font-bold text-center mb-6">
-              Free <span className="text-sm font-normal">/ month</span>
+              $0 <span className="text-sm font-normal">/ month</span>
             </p>
             <ul className="text-gray-600 mb-8 flex-grow list-disc pl-5 space-y-2">
               <li>5 AI queries per day</li>

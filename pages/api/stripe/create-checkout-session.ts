@@ -10,8 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Replace with your actual Price ID from the Stripe Dashboard
-    const priceId = 'price_1R2H24G3CmMC7BS0Z0cst8Jy';
+    const priceId = 'price_1R2H24G3CmMC7BS0Z0cst8Jy'; // your actual Price ID
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -22,9 +21,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           quantity: 1,
         },
       ],
+      // Where they go upon success
       success_url: `${process.env.NEXTAUTH_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      // This is where user is taken if they cancel or exit payment
-      cancel_url: `${process.env.NEXTAUTH_URL}/cancelled`,
+      // Where they go if they cancel or close the checkout
+      cancel_url: `${process.env.NEXTAUTH_URL}/`,
     });
 
     return res.status(200).json({ url: session.url });
@@ -33,3 +33,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'Stripe session creation failed' });
   }
 }
+
