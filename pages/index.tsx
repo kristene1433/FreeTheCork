@@ -7,10 +7,20 @@ import Image from 'next/image';
 import Footer from '../components/Footer';
 
 export default function Home() {
-  const { data: session } = useSession();
+  //const { data: session } = useSession();
 
-  const wordsRowOne = ['Exclusive Wines', 'Tailored Pairings', 'Personalized Advice', 'Local Recommendations'];
-  const wordsRowTwo = ['Wine Journal', 'Curated Experiences', 'Expert Sommeliers', 'Membership Perks'];
+  const wordsRowOne = [
+    'Exclusive Wines',
+    'Tailored Pairings',
+    'Personalized Advice',
+    'Local Recommendations',
+  ];
+  const wordsRowTwo = [
+    'Wine Journal',
+    'Curated Experiences',
+    'Expert Sommeliers',
+    'Membership Perks',
+  ];
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
@@ -31,29 +41,38 @@ export default function Home() {
           <TextMarquee words={wordsRowTwo} direction="right" />
         </div>
 
-        {/* Membership Plans */}
+        {/* Membership Plans (both boxes use same color button) */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
           {/* AI Sommelier Plan */}
           <div className="bg-white shadow-xl rounded-lg p-8 flex flex-col items-center justify-between">
-            <h2 className="text-3xl font-semibold text-gray-800">AI Sommelier</h2>
+            <h2 className="text-3xl font-semibold text-gray-800">
+              AI Sommelier
+            </h2>
             <p className="mt-4 text-gray-600 text-center">
-              Explore wines, pairings, and personalized recommendations with our powerful AI Sommelier.
+              Explore wines, pairings, and personalized recommendations with our
+              powerful AI Sommelier.
             </p>
             <ul className="mt-4 text-left text-gray-700 space-y-2">
               <li>🍷 Personalized wine advice</li>
               <li>💡 General pairing suggestions</li>
               <li>📍 Local availability insights</li>
             </ul>
-            <Link href="/signup" className="mt-6 py-2 px-6 bg-blue-600 text-white rounded hover:bg-blue-500">
+            <Link
+              href="/signup"
+              className="mt-6 py-2 px-6 bg-blue-600 text-white rounded hover:bg-blue-500"
+            >
               Sign Up Free
             </Link>
           </div>
 
           {/* Personalized Sommelier Plan */}
           <div className="bg-white shadow-xl rounded-lg p-8 flex flex-col items-center justify-between">
-            <h2 className="text-3xl font-semibold text-gray-800">Personalized Sommelier</h2>
+            <h2 className="text-3xl font-semibold text-gray-800">
+              Personalized Sommelier
+            </h2>
             <p className="mt-4 text-gray-600 text-center">
-              Unlock your personal wine expert with detailed taste profiling and exclusive perks.
+              Unlock your personal wine expert with detailed taste profiling
+              and exclusive perks.
             </p>
             <ul className="mt-4 text-left text-gray-700 space-y-2">
               <li>🥂 Comprehensive taste profiling</li>
@@ -62,7 +81,10 @@ export default function Home() {
               <li>🗺️ Customized local recommendations</li>
               <li>🌟 Priority sommelier support</li>
             </ul>
-            <Link href="/pricing" className="mt-6 py-2 px-6 bg-blue-600 text-white rounded hover:bg-blue-500">
+            <Link
+              href="/pricing"
+              className="mt-6 py-2 px-6 bg-blue-600 text-white rounded hover:bg-blue-500"
+            >
               View Membership
             </Link>
           </div>
@@ -71,14 +93,17 @@ export default function Home() {
         {/* Wine Journal Section (Informational Banner) */}
         <section className="bg-gray-100 rounded-lg shadow-lg flex flex-col md:flex-row items-center p-8 my-12">
           <div className="flex-1 mb-4 md:mb-0">
-            <h3 className="text-3xl font-semibold text-gray-800 mb-2">Your Digital Wine Journal</h3>
+            <h3 className="text-3xl font-semibold text-gray-800 mb-2">
+              Your Digital Wine Journal
+            </h3>
             <p className="text-gray-600">
-              Track your wine experiences, personal ratings, notes, and preferences all in one place —
-              exclusively available to our Personalized Sommelier members.
+              Track your wine experiences, personal ratings, notes, and
+              preferences all in one place—exclusively available to our
+              Personalized Sommelier members.
             </p>
           </div>
           <div className="flex-shrink-0">
-            <Image 
+            <Image
               src="/images/wine-journal.jpg"
               alt="Wine Journal"
               width={300}
@@ -99,9 +124,12 @@ export default function Home() {
               className="w-full h-48 object-cover"
             />
             <div className="p-6 bg-gray-50">
-              <h3 className="text-xl font-semibold mb-2">Discover Local Wine Events</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                Discover Local Wine Events
+              </h3>
               <p className="text-gray-600">
-                Stay updated on tastings, festivals, and wine events in your area.
+                Stay updated on tastings, festivals, and wine events in your
+                area.
               </p>
             </div>
           </div>
@@ -115,7 +143,9 @@ export default function Home() {
               className="w-full h-48 object-cover"
             />
             <div className="p-6 bg-gray-50">
-              <h3 className="text-xl font-semibold mb-2">Perfect Food & Wine Pairings</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                Perfect Food & Wine Pairings
+              </h3>
               <p className="text-gray-600">
                 Expert suggestions for pairing wines perfectly with your meals.
               </p>
@@ -131,7 +161,9 @@ export default function Home() {
               className="w-full h-48 object-cover"
             />
             <div className="p-6 bg-gray-50">
-              <h3 className="text-xl font-semibold mb-2">Wine Price Comparisons</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                Wine Price Comparisons
+              </h3>
               <p className="text-gray-600">
                 Find the best deals and compare prices of your favorite wines.
               </p>
@@ -144,15 +176,14 @@ export default function Home() {
           <Marquee
             images={[
               "/images/ChateauD'YquemSauternes2016.jpg",
-              '/images/GrahamsVintagePort2020.jpg',
-              '/images/OsbornePedroXimenez.jpg',
+              "/images/GrahamsVintagePort2020.jpg",
+              "/images/OsbornePedroXimenez.jpg",
             ]}
           />
         </div>
       </main>
 
-      <Footer/>
-      
+      <Footer />
     </div>
   );
 }
