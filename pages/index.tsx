@@ -54,7 +54,6 @@ export default function Home() {
                 alt={img}
                 width={400}
                 height={250}
-                // Ensures the TOP of the image is always visible
                 className="w-full h-48 object-cover object-top"
               />
               <div className="p-6">
@@ -82,38 +81,40 @@ export default function Home() {
           {['AI Sommelier', 'Personalized Sommelier'].map((plan, idx) => (
             <div
               key={idx}
-              className="bg-gray-900 shadow-xl rounded-lg p-8 flex flex-col justify-between h-full"
+              className="bg-gray-900 shadow-xl rounded-lg p-8 flex flex-col justify-between h-full text-center"
             >
-              {/* Top portion: heading, paragraph, bullet list */}
               <div>
-                <h2 className="text-3xl font-semibold text-white text-center">
+                <h2 className="text-3xl font-semibold text-white">
                   {plan}
                 </h2>
-                <p className="mt-4 text-gray-300 text-center">
+                <p className="mt-4 text-gray-300">
                   {idx === 0
                     ? 'Explore wines, pairings, and personalized recommendations with our powerful AI Sommelier.'
                     : 'Unlock your personal wine expert with detailed taste profiling and exclusive perks.'}
                 </p>
-                <ul className="mt-4 text-gray-300 space-y-2 text-left">
-                  {idx === 0 ? (
-                    <>
-                      <li>🍷 Personalized wine advice</li>
-                      <li>💡 General pairing suggestions</li>
-                      <li>📍 Local availability insights</li>
-                    </>
-                  ) : (
-                    <>
-                      <li>🥂 Comprehensive taste profiling</li>
-                      <li>📖 Exclusive digital wine journal</li>
-                      <li>🎁 Curated wine experiences</li>
-                      <li>🗺️ Customized local recommendations</li>
-                      <li>🌟 Priority sommelier support</li>
-                    </>
-                  )}
-                </ul>
+
+                {/* Center the bullets horizontally, but keep each bullet line left-aligned */}
+                <div className="flex justify-center mt-4">
+                  <ul className="text-gray-300 space-y-2 text-left">
+                    {idx === 0 ? (
+                      <>
+                        <li>🍷 Personalized wine advice</li>
+                        <li>💡 General pairing suggestions</li>
+                        <li>📍 Local availability insights</li>
+                      </>
+                    ) : (
+                      <>
+                        <li>🥂 Comprehensive taste profiling</li>
+                        <li>📖 Exclusive digital wine journal</li>
+                        <li>🎁 Curated wine experiences</li>
+                        <li>🗺️ Customized local recommendations</li>
+                        <li>🌟 Priority sommelier support</li>
+                      </>
+                    )}
+                  </ul>
+                </div>
               </div>
 
-              {/* Bottom portion: button pinned to the bottom */}
               <Link
                 href={idx === 0 ? '/signup' : '/pricing'}
                 className="mt-6 py-2 px-6 bg-blue-600 text-white rounded hover:bg-blue-500 self-center"
@@ -123,7 +124,6 @@ export default function Home() {
             </div>
           ))}
         </section>
-
 
         {/* Wine Journal Section */}
         <section className="bg-gray-800 rounded-xl shadow-xl flex flex-col md:flex-row items-center justify-between p-10 my-12">
