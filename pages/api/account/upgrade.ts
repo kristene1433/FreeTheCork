@@ -1,4 +1,5 @@
 // pages/api/account/upgrade.ts
+
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import dbConnect from '../../../lib/mongodb';
@@ -30,19 +31,35 @@ export default async function upgradeHandler(
     }
 
     const { newPlan } = req.body;
+
+    // 1) Downgrade/Stay on Basic
     if (newPlan === 'basic') {
       user.membership = 'basic';
       await user.save();
-      return res.status(200).json({ membership: 'basic' });
+      return res.status(200).json({
+        membership: 'basic',
+        message: 'Membership updated to Basic',
+      });
     }
 
-    // If newPlan is 'premium' or anything else, 
-    // handle or return an error (since we do Stripe checkout for premium)
+    // 2) Upgrade to Premium
+    if (newPlan === 'premium') {
+      // In a real app, you'd typically rely on your Stripe webhook
+      // or a completed Stripe checkout session. Here, we do it directly:
+      user.membership = 'premium';
+      await user.save();
+      return res.status(200).json({
+        membership: 'premium',
+        message: 'Membership updated to Premium',
+      });
+    }
+
+    // 3) If the newPlan is neither 'basic' nor 'premium'
     return res.status(400).json({
-      error: "Cannot directly upgrade to premium here. Use Stripe checkout."
+      error: 'Invalid plan choice. Must be "basic" or "premium".',
     });
   } catch (err) {
-    console.error(err);
+    console.error('Upgrade Error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

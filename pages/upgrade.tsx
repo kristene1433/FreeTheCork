@@ -1,6 +1,8 @@
-import { useEffect, useState, FormEvent } from 'react';
-import { useSession, signIn } from 'next-auth/react';
-import { useRouter } from 'next/router';
+"use client";
+
+import { useEffect, useState, FormEvent } from "react";
+import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function UpgradePage() {
   const router = useRouter();
@@ -8,16 +10,20 @@ export default function UpgradePage() {
 
   // If user is not logged in, prompt them to sign in
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (status === "unauthenticated") {
       signIn();
     }
   }, [status]);
 
-  // We read the user's current membership to decide which radio button is checked
-  const currentMembership = session?.user?.membership || 'basic';
-  const [plan, setPlan] = useState<'basic' | 'premium'>(currentMembership === 'premium' ? 'premium' : 'basic');
+  // Current membership from session
+  const currentMembership = session?.user?.membership || "basic";
 
-  if (status === 'loading') {
+  // Radio button to keep track of the selected plan
+  const [plan, setPlan] = useState<"basic" | "premium">(
+    currentMembership === "premium" ? "premium" : "basic"
+  );
+
+  if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Loading...
@@ -26,7 +32,7 @@ export default function UpgradePage() {
   }
 
   if (!session) {
-    // Not signed in or redirecting
+    // Not signed in or still redirecting
     return (
       <div className="min-h-screen flex items-center justify-center">
         Redirecting...
@@ -37,34 +43,33 @@ export default function UpgradePage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    // If user selected Basic, we'll downgrade (or keep) them to basic
-    // If user selected Premium, we redirect them to Stripe checkout
     try {
-      if (plan === 'basic') {
-        // 1) Downgrade to basic
-        const res = await fetch('/api/account/upgrade', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ newPlan: 'basic' }),
+      if (plan === "basic") {
+        // 1) Downgrade (or remain) to Basic:
+        // Here we call an API route to set membership to 'basic' in DB
+        const res = await fetch("/api/account/upgrade", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newPlan: "basic" }),
         });
 
         const data = await res.json();
         if (!res.ok) {
-          alert(data.error || 'Error updating plan');
+          alert(data.error || "Error updating plan");
           return;
         }
 
-        alert(`You are now on the Basic plan.`);
-        router.push('/dashboard');
+        alert("You are now on the Basic plan.");
+        router.push("/dashboard");
       } else {
         // 2) If plan = 'premium', create a Stripe checkout session
-        const checkoutRes = await fetch('/api/stripe/create-checkout-session', {
-          method: 'POST',
+        const checkoutRes = await fetch("/api/stripe/create-checkout-session", {
+          method: "POST",
         });
 
         const checkoutData = await checkoutRes.json();
         if (!checkoutRes.ok || !checkoutData.url) {
-          alert(checkoutData.error || 'Error creating checkout session');
+          alert(checkoutData.error || "Error creating checkout session");
           return;
         }
 
@@ -73,13 +78,13 @@ export default function UpgradePage() {
       }
     } catch (err) {
       console.error(err);
-      alert('Network or server error');
+      alert("Network or server error. See console.");
     }
   }
 
   function handleCancel() {
-    // If user cancels, just go back to dashboard
-    router.push('/dashboard');
+    // If user cancels, go back to the dashboard
+    router.push("/dashboard");
   }
 
   return (
@@ -97,10 +102,12 @@ export default function UpgradePage() {
                 id="basic"
                 name="plan"
                 value="basic"
-                checked={plan === 'basic'}
-                onChange={() => setPlan('basic')}
+                checked={plan === "basic"}
+                onChange={() => setPlan("basic")}
               />
-              <label htmlFor="basic" className="ml-2">Basic (Free)</label>
+              <label htmlFor="basic" className="ml-2">
+                Basic (Free)
+              </label>
             </div>
             <p className="ml-6 text-sm text-gray-600 mb-4">
               Minimal features, no personalized preferences.
@@ -112,10 +119,12 @@ export default function UpgradePage() {
                 id="premium"
                 name="plan"
                 value="premium"
-                checked={plan === 'premium'}
-                onChange={() => setPlan('premium')}
+                checked={plan === "premium"}
+                onChange={() => setPlan("premium")}
               />
-              <label htmlFor="premium" className="ml-2">Premium ($9.99/month)</label>
+              <label htmlFor="premium" className="ml-2">
+                Premium ($9.99/month)
+              </label>
             </div>
             <p className="ml-6 text-sm text-gray-600">
               Unlimited queries, personalized preferences, and more.
@@ -126,10 +135,10 @@ export default function UpgradePage() {
           <div className="w-1/2 pl-8">
             <h2 className="text-lg font-semibold mb-4">Payment Info</h2>
 
-            {plan === 'premium' ? (
+            {plan === "premium" ? (
               <p className="text-sm text-gray-700">
-                Upon submission, you’ll be redirected to our secure Stripe checkout.
-                No payment data is collected here.
+                Upon submission, you’ll be redirected to our secure Stripe
+                checkout. No payment data is collected here.
               </p>
             ) : (
               <p className="text-sm text-gray-600">

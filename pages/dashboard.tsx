@@ -3,34 +3,30 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
-import Link from 'next/link';
+import Link from "next/link";
 
-// Extend NextAuth user to include 'membership'
 interface ExtendedUser {
   name?: string | null;
   email?: string | null;
   image?: string | null;
-  membership?: string; // e.g. "premium", "free", ...
+  membership?: string; // "basic", "premium", etc.
 }
 
-// Each chat entry is either user or bot
 interface ChatEntry {
   role: "user" | "bot";
-  text: string;  // AI's response can be Markdown, while user's text is plain
+  text: string;
 }
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
-
-  // We'll store the typed user reference here
   const user = session?.user as ExtendedUser | undefined;
-  // If membership is "premium", we display the Preferences link
   const isPremium = user?.membership === "premium";
 
   const [prompt, setPrompt] = useState("");
   const [responseHistory, setResponseHistory] = useState<ChatEntry[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Redirect to sign-in if user is not authenticated
   useEffect(() => {
     if (status === "unauthenticated") {
       signIn();
@@ -53,15 +49,12 @@ export default function Dashboard() {
     );
   }
 
+  // Submit user query to your /api/chat
   async function handleChat(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
 
-    // Add the user's prompt as a 'user' role entry
-    setResponseHistory(prev => [
-      ...prev,
-      { role: "user", text: prompt },
-    ]);
+    setResponseHistory((prev) => [...prev, { role: "user", text: prompt }]);
 
     try {
       const res = await fetch("/api/chat", {
@@ -73,19 +66,19 @@ export default function Dashboard() {
       const data = await res.json();
 
       if (res.ok && data.answer) {
-        setResponseHistory(prev => [
+        setResponseHistory((prev) => [
           ...prev,
           { role: "bot", text: data.answer },
         ]);
       } else {
-        setResponseHistory(prev => [
+        setResponseHistory((prev) => [
           ...prev,
           { role: "bot", text: `⚠️ Error: ${data.error}` },
         ]);
       }
     } catch (err) {
       console.error(err);
-      setResponseHistory(prev => [
+      setResponseHistory((prev) => [
         ...prev,
         { role: "bot", text: "⚠️ An error occurred." },
       ]);
@@ -102,9 +95,7 @@ export default function Dashboard() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">🍷 AI Sommelier Chat</h1>
           <div className="flex items-center space-x-4">
-            <p className="text-gray-700">
-              Logged in as {user?.email}
-            </p>
+            <p className="text-gray-700">Logged in as {user?.email}</p>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
               className="py-1 px-3 bg-red-600 text-white rounded hover:bg-red-500"
@@ -142,9 +133,7 @@ export default function Dashboard() {
                       {entry.text}
                     </ReactMarkdown>
                   ) : (
-                    <p className="whitespace-pre-wrap">
-                      {entry.text}
-                    </p>
+                    <p className="whitespace-pre-wrap">{entry.text}</p>
                   )}
                 </div>
               </div>
@@ -156,7 +145,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Form */}
+        {/* Chat Form */}
         <form onSubmit={handleChat} className="mt-4 flex space-x-2 w-full">
           <input
             className="border rounded p-3 w-full shadow-sm"
@@ -173,27 +162,40 @@ export default function Dashboard() {
           </button>
         </form>
 
-        {/* Preferences Link if Premium, Otherwise Prompt to Upgrade */}
+        {/* Plan Options */}
         <div className="mt-6 text-center">
           {isPremium ? (
-            <Link href="/preferences">
-              <button className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-500 shadow-md">
-                Edit Your Preferences
-              </button>
-            </Link>
+            <>
+              <Link href="/preferences">
+                <button className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-500 shadow-md">
+                  Edit Your Preferences
+                </button>
+              </Link>
+
+              {/* New: A 'Change Plan' link to go to /upgrade */}
+              <div className="mt-4">
+                <p className="text-gray-700 mb-2">You are on the Premium plan.</p>
+                <Link href="/upgrade">
+                  <button className="py-2 px-4 bg-yellow-500 text-white rounded hover:bg-yellow-400 shadow-md">
+                    Change Plan
+                  </button>
+                </Link>
+              </div>
+            </>
           ) : (
-            <div className="text-gray-700">
-              <p>You are on the Free plan. Upgrade to unlock personalized preferences.</p>
+            <>
+              <p className="text-gray-700">
+                You are on the Free plan. Upgrade to unlock personalized preferences.
+              </p>
               <Link href="/upgrade">
                 <button className="mt-2 py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-500 shadow-md">
                   Upgrade Now
                 </button>
               </Link>
-            </div>
+            </>
           )}
         </div>
       </main>
     </div>
   );
 }
-
