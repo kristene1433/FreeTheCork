@@ -6,14 +6,14 @@ import Image from 'next/image';
 
 export default function AboutUsPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-250">
       <NavBar />
 
       <main className="flex-grow container mx-auto px-4 py-12">
         <section className="bg-white shadow-md rounded-lg p-8 md:p-12 lg:flex lg:items-center">
           <div className="lg:w-1/3">
             <Image
-              src="public/images/KrissyHeadshot.jpg" // Replace with your image
+              src="/images/KrissyHeadshot.jpg" 
               alt="Profile Image"
               width={400}
               height={400}
