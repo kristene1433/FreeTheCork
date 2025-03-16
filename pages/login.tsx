@@ -1,4 +1,4 @@
-// pages/login.tsx
+
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
@@ -12,12 +12,15 @@ export default function LoginPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
     const result = await signIn('credentials', {
       email,
       password,
-      redirect: false,
+      redirect: false, // prevents auto-redirect on success
     });
+
     if (result?.ok) {
+      // If login OK, push to /dashboard (or anywhere you want)
       router.push('/dashboard');
     } else {
       alert('Login failed');
@@ -30,9 +33,7 @@ export default function LoginPage() {
 
       <main className="flex-grow flex items-center justify-center container mx-auto px-4">
         <div className="bg-white p-10 shadow-xl rounded-lg w-full max-w-md">
-          <h1 className="text-3xl font-bold mb-6 text-center">
-            Login to Your Account
-          </h1>
+          <h1 className="text-3xl font-bold mb-6 text-center">Login to Your Account</h1>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block mb-2 font-semibold">Email</label>

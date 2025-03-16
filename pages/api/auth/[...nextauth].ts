@@ -1,5 +1,3 @@
-// pages/api/auth/[...nextauth].ts
-
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import dbConnect from '../../../lib/mongodb';
@@ -30,7 +28,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user._id.toString(),
           email: user.email,
-          membership: user.membership, // "basic" or "premium"
+          membership: user.membership,
         };
       },
     }),
@@ -39,6 +37,12 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
+
+ 
+  pages: {
+    signIn: '/login',
+  },
+
   callbacks: {
     // 1) Copy user info to JWT on login
     async jwt({ token, user }) {
@@ -49,6 +53,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+
     // 2) Re-check membership from DB on each session call
     async session({ session, token }) {
       if (token.email) {
