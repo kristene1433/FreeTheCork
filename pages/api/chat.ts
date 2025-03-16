@@ -44,8 +44,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const doc = await User.findOne({ email: sessionEmail }).lean<UserDoc>();
 
       if (doc?.membership === "premium" && doc?.winePreferences) {
-        const { drynessLevel, favoriteTypes, dislikedFlavors, budgetRange, knowledgeLevel, locationZip } =
-          doc.winePreferences;
+        const {
+          drynessLevel,
+          favoriteTypes,
+          dislikedFlavors,
+          budgetRange,
+          knowledgeLevel,
+          locationZip,
+        } = doc.winePreferences;
+
         preferenceString = `
 User Preferences:
 - Dryness Level: ${drynessLevel || "N/A"}
@@ -65,9 +72,16 @@ If the user's request explicitly asks about a specific wine or topic unrelated t
   }
 
   if (needsWebSearch(prompt)) {
-    const answer = await performWebSearch(prompt, preferenceString);
-    return res.status(200).json({ answer });
+    // Perform web search logic
+    try {
+      const answer = await performWebSearch(prompt, preferenceString);
+      return res.status(200).json({ answer });
+    } catch (err) {
+      console.error("Web Search Error:", err);
+      return res.status(500).json({ error: "Failed to perform web search." });
+    }
   } else {
+    // Direct AI response
     try {
       const directAnswer = await directAiResponse(prompt, preferenceString);
       return res.status(200).json({ answer: directAnswer });
@@ -96,22 +110,20 @@ async function directAiResponse(userPrompt: string, preferences: string): Promis
       {
         role: "system",
         content: `
-You are a helpful and knowledgeable AI Sommelier. 
+You are Kristene, a charming and witty AI Sommelier specializing exclusively in wine. 
+- Politely decline or redirect if the user asks about anything that is not clearly related to wine (e.g., weather, sports, general trivia).
+- Keep the conversation going by asking additional wine-related questions or offering further wine guidance.
+- Always respond professionally and warmly.
 ${preferences}
-
-Follow these rules precisely:
-- If the user explicitly requests personalized recommendations or asks for general suggestions without specifying a wine, fully consider their preferences provided above.
-- If the user explicitly requests information about a specific wine (e.g., "Opus One") or a specific topic that clearly lies outside their stated preferences, you must ignore the preferences and respond directly, accurately, and helpfully about the user's specific request.
-- Always prioritize providing accurate, useful, and direct responses to specific questions.
-`
+        `
       },
       { role: "user", content: userPrompt },
     ],
   });
+
   return response.choices[0].message?.content ?? "No response";
 }
 
-// Perform web search logic
 // Perform web search logic
 async function performWebSearch(query: string, preferences: string): Promise<string> {
   console.log("🔍 Using Web Search...");
@@ -141,7 +153,6 @@ Return results clearly formatted in markdown with store names, brief description
       throw new Error(`Web Search API Error: ${response.statusText} - ${errorText}`);
     }
 
-    // Define correct types explicitly:
     interface WebSearchOutputItem {
       type: string;
       text?: string;
