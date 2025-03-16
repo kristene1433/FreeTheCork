@@ -1,5 +1,4 @@
 // pages/api/auth/[...nextauth].ts
-
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import dbConnect from '../../../lib/mongodb';
@@ -16,32 +15,39 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         await dbConnect();
-
+        // 1) Find user by email
         const user = await User.findOne({ email: credentials?.email });
         if (!user) {
           throw new Error('User not found');
         }
 
-        const isValid = await bcrypt.compare(credentials?.password ?? '', user.passwordHash);
+        // 2) Compare password with stored hash
+        const isValid = await bcrypt.compare(
+          credentials?.password ?? '',
+          user.passwordHash
+        );
         if (!isValid) {
           throw new Error('Invalid password');
         }
 
+        // 3) Return minimal user object for the JWT
         return {
           id: user._id.toString(),
           email: user.email,
-          membership: user.membership,
+          membership: user.membership, // "basic", "premium", etc.
         };
       },
     }),
   ],
   pages: {
-    signIn: '/login',
+    signIn: '/login', // Custom login page
   },
   session: {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
+  // (Optional) Debug in non-production:
+  debug: process.env.NODE_ENV !== 'production',
 
   callbacks: {
     async jwt({ token, user }) {
@@ -64,4 +70,3 @@ export const authOptions: NextAuthOptions = {
 };
 
 export default NextAuth(authOptions);
-
