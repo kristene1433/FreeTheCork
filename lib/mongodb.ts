@@ -1,5 +1,4 @@
 // lib/mongodb.ts
-
 import mongoose, { Mongoose } from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
@@ -43,4 +42,3 @@ async function dbConnect(): Promise<Mongoose> {
 }
 
 export default dbConnect;
-
