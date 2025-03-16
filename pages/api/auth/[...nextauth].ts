@@ -1,3 +1,5 @@
+// pages/api/auth/[...nextauth].ts
+
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import dbConnect from '../../../lib/mongodb';
@@ -14,13 +16,10 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         await dbConnect();
-        // 1) Find user by email
         const user = await User.findOne({ email: credentials?.email });
         if (!user) {
           throw new Error('User not found');
         }
-
-        // 2) Compare password with stored hash
         const isValid = await bcrypt.compare(
           credentials?.password ?? '',
           user.passwordHash
@@ -28,27 +27,20 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) {
           throw new Error('Invalid password');
         }
-
-        // 3) Return minimal user object for the JWT
         return {
           id: user._id.toString(),
           email: user.email,
-          membership: user.membership, // "basic", "premium", etc.
+          membership: user.membership, // "basic" or "premium"
         };
       },
     }),
   ],
-  pages: {
-    signIn: '/login', // Custom login page
-  },
   session: {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  // (Optional) Debug in non-production:
-  debug: process.env.NODE_ENV !== 'production',
-
   callbacks: {
+    // 1) Copy user info to JWT on login
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -57,11 +49,19 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+    // 2) Re-check membership from DB on each session call
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        session.user.membership = token.membership;
+      if (token.email) {
+        await dbConnect();
+        const dbUser = await User.findOne({ email: token.email });
+        if (dbUser) {
+          session.user = {
+            ...session.user,
+            id: dbUser._id.toString(),
+            email: dbUser.email,
+            membership: dbUser.membership,
+          };
+        }
       }
       return session;
     },
