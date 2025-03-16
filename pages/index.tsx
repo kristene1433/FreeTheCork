@@ -3,6 +3,7 @@ import TextMarquee from '../components/TextMarquee';
 import Marquee from '../components/Marquee';
 import Image from 'next/image';
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 
 export default function Home() {
   const wordsRowOne = [
@@ -160,6 +161,7 @@ export default function Home() {
           />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
