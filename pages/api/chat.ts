@@ -1,5 +1,3 @@
-// pages/api/sommelier.ts
-
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
@@ -17,28 +15,32 @@ interface WinePreferences {
   locationZip?: string;
 }
 
-// Usage shape for basic (free) plan
+// For basic (free) plan usage limit
 interface UsageInfo {
   count: number;
   lastUsed: string; // date string 'YYYY-MM-DD'
+}
+
+// Conversation message structure
+interface ConversationMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
 }
 
 interface UserDoc {
   _id: string;
   email: string;
   membership?: string; // "basic" or "premium"
+  passwordHash: string;
   winePreferences?: WinePreferences;
   usage?: UsageInfo;
+  conversationHistory?: ConversationMessage[];
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 1) Create a single top-level instance of OpenAI
-// ──────────────────────────────────────────────────────────────────────────────
+// Single top-level OpenAI instance
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// ──────────────────────────────────────────────────────────────────────────────
 // Main Handler
-// ──────────────────────────────────────────────────────────────────────────────
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -49,82 +51,84 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Prompt is required" });
   }
 
-  // Retrieve user session
+  // Retrieve session
   const session = await getServerSession(req, res, authOptions);
   const sessionEmail = session?.user?.email || "";
 
-  // Initialize membership and preference string
+  let userDoc: UserDoc | null = null;
   let userMembership = "basic";
   let preferenceString = "";
-  let userDoc: UserDoc | null = null;
 
-  // ────────────────────────────────────────────────────────────────────────────
-  // 2) Load user doc and preferences
-  // ────────────────────────────────────────────────────────────────────────────
   try {
     if (sessionEmail) {
       await dbConnect();
-      userDoc = await User.findOne({ email: sessionEmail }).lean<UserDoc>();
+      userDoc = await User.findOne({ email: sessionEmail });
 
-      // If userDoc found and membership is 'premium'
+      // Check membership
       if (userDoc?.membership === "premium") {
         userMembership = "premium";
-        if (userDoc?.winePreferences) {
-          const {
-            drynessLevel,
-            favoriteTypes,
-            dislikedFlavors,
-            budgetRange,
-            knowledgeLevel,
-            locationZip,
-          } = userDoc.winePreferences;
+      }
 
-          preferenceString = `
-User Preferences:
-- Dryness Level: ${drynessLevel || "N/A"}
-- Favorite Types: ${favoriteTypes?.join(", ") || "N/A"}
-- Disliked Flavors: ${dislikedFlavors?.join(", ") || "N/A"}
-- Budget Range: ${budgetRange || "N/A"}
-- Knowledge Level: ${knowledgeLevel || "N/A"}
-- Location Zip: ${locationZip || "N/A"}
+      // Build preferences if premium
+      if (userMembership === "premium" && userDoc?.winePreferences) {
+        const {
+          drynessLevel,
+          favoriteTypes,
+          dislikedFlavors,
+          budgetRange,
+          knowledgeLevel,
+          locationZip,
+        } = userDoc.winePreferences;
 
-Use these preferences if and only if the user is seeking personalized wine recommendations. 
-If the user's request explicitly asks about a specific wine or topic unrelated to their preferences, ignore these preferences and directly answer the user's specific request.
-`;
-        }
+        preferenceString = `\nUser Preferences:\n- Dryness Level: ${drynessLevel || "N/A"}\n- Favorite Types: ${favoriteTypes?.join(", ") || "N/A"}\n- Disliked Flavors: ${dislikedFlavors?.join(", ") || "N/A"}\n- Budget Range: ${budgetRange || "N/A"}\n- Knowledge Level: ${knowledgeLevel || "N/A"}\n- Location Zip: ${locationZip || "N/A"}\n\nUse these preferences if and only if the user is seeking personalized wine recommendations.\nIf the user's request explicitly asks about a specific wine or topic unrelated to their preferences, ignore these preferences and directly answer the user's specific request.\n`;
       }
     }
   } catch (err) {
     console.error("Preference load error:", err);
   }
 
-  // ────────────────────────────────────────────────────────────────────────────
-  // 3) If user is 'basic', enforce daily 5-query limit + skip web search
-  // ────────────────────────────────────────────────────────────────────────────
+  // If basic user, enforce daily limit
   if (userMembership === "basic") {
     const freeCheck = await enforceFreeLimit(userDoc);
     if (!freeCheck.success) {
-      // If usage limit exceeded, respond accordingly
       return res.status(403).json({ error: freeCheck.message });
     }
   }
 
-  // ────────────────────────────────────────────────────────────────────────────
-  // 4) If 'premium' and the user query triggers web search => use web search
-  //    If 'basic', skip web search
-  // ────────────────────────────────────────────────────────────────────────────
+  // 1) Update conversation memory with the new user message
+  // We'll store up to 6 messages total to keep it short.
+  const conversationMessages: ConversationMessage[] = await updateConversationHistory(
+    userDoc,
+    sessionEmail,
+    { role: "user", content: prompt }
+  );
+
+  // 2) Decide if we need web search (only if premium)
   if (userMembership === "premium" && needsWebSearch(prompt)) {
     try {
-      const answer = await performWebSearch(prompt, preferenceString);
+      const answer = await performWebSearch(conversationMessages, preferenceString);
+      // Then store that answer in conversation history as well
+      await updateConversationHistory(userDoc, sessionEmail, {
+        role: "assistant",
+        content: answer,
+      });
+
       return res.status(200).json({ answer });
     } catch (err) {
       console.error("Web Search Error:", err);
       return res.status(500).json({ error: "Failed to perform web search." });
     }
   } else {
-    // Otherwise, direct AI response for both basic & premium
+    // 3) Direct AI response
     try {
-      const directAnswer = await directAiResponse(prompt, preferenceString);
+      const directAnswer = await directAiResponse(conversationMessages, preferenceString);
+
+      // Save the assistant response to conversation
+      await updateConversationHistory(userDoc, sessionEmail, {
+        role: "assistant",
+        content: directAnswer,
+      });
+
       return res.status(200).json({ answer: directAnswer });
     } catch (err) {
       console.error("AI Error:", err);
@@ -133,13 +137,11 @@ If the user's request explicitly asks about a specific wine or topic unrelated t
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
 // Enforce daily limit for 'basic' membership: 5 queries per day
-// ──────────────────────────────────────────────────────────────────────────────
 async function enforceFreeLimit(
   userDoc: UserDoc | null
 ): Promise<{ success: boolean; message?: string }> {
-  // If no user doc or usage, let them proceed. You could also block, if needed.
+  // If no userDoc or usage, let them proceed
   if (!userDoc) {
     return { success: true };
   }
@@ -147,93 +149,146 @@ async function enforceFreeLimit(
   const today = new Date().toISOString().slice(0, 10); // e.g. "2025-03-16"
   const usage: UsageInfo = userDoc.usage || { count: 0, lastUsed: "" };
 
-  // If user's last usage day is not today, reset
+  // Reset if new day
   if (usage.lastUsed !== today) {
     usage.count = 0;
     usage.lastUsed = today;
   }
 
-  // If usage already at 5, block
   if (usage.count >= 5) {
     return {
       success: false,
-      message:
-        "You have reached your daily free limit of 5 inquiries. Please upgrade to premium for unlimited queries.",
+      message: "You have reached your daily free limit of 5 inquiries. Please upgrade to premium for unlimited queries.",
     };
   }
 
   // Otherwise increment usage
   usage.count += 1;
 
-  // Save usage changes to DB
   try {
     await User.updateOne({ _id: userDoc._id }, { $set: { usage } });
-  } catch (updateErr) {
-    console.error("Error updating user usage:", updateErr);
-    // If updating fails, you decide how to handle it. For now, we allow proceed.
+  } catch (err) {
+    console.error("Error updating usage:", err);
   }
 
   return { success: true };
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Determine if web search is needed
-// ──────────────────────────────────────────────────────────────────────────────
+// Decide if web search is needed
 function needsWebSearch(prompt: string): boolean {
   const keywords = [
-    "available",
-    "price",
-    "latest",
-    "buy",
-    "vintage",
-    "store",
-    "find",
-    "purchase",
-    "Wine Spectator",
-    "ratings",
-    "Wine Enthusiast",
-    "Decanter",
+    "available", "price", "latest", "buy", "vintage", "store", "find",
+    "purchase", "Wine Spectator", "ratings", "Wine Enthusiast", "Decanter"
   ];
   return keywords.some((k) => prompt.toLowerCase().includes(k));
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Direct AI response logic (using the single top-level openai instance)
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * Update conversation history in the DB.
+ * We'll limit to 6 messages total to keep context short.
+ * We'll always preserve the initial system instruction if present.
+ */
+async function updateConversationHistory(
+  userDoc: UserDoc | null,
+  sessionEmail: string,
+  newMessage: ConversationMessage
+): Promise<ConversationMessage[]> {
+  // Build the initial system message that sets the tone.
+  // Note: We'll store it at index 0 if it doesn't exist.
+  const systemMessage: ConversationMessage = {
+    role: "system",
+    content: `You are Kristene, a witty, knowledgeable AI Sommelier.\n- Keep track of previous user context (e.g. goat cheese, Sauvignon Blanc).\n- Provide direct, concise answers first, but can go deeper if user shows advanced interest.\n- Focus on wine. Politely redirect off-topic requests.\n- Keep a friendly, professional tone.\n`,
+  };
+
+  if (!userDoc) {
+    // If user not found in DB, just build ephemeral conversation.
+    const ephemeralHistory = [systemMessage, newMessage];
+    return ephemeralHistory;
+  }
+
+  // We have a userDoc, let's get their conversationHistory
+  userDoc.conversationHistory = userDoc.conversationHistory || [];
+
+  // If the conversation is empty, add the system message.
+  if (userDoc.conversationHistory.length === 0) {
+    userDoc.conversationHistory.push(systemMessage);
+  }
+
+  // Push the new message
+  userDoc.conversationHistory.push(newMessage);
+
+  // Limit to last 6 messages, but keep the system message at index 0.
+  // So we do something like: keep system message, plus last 5 messages.
+  if (userDoc.conversationHistory.length > 6) {
+    // remove messages from index 1 up to length-6
+    const toRemove = userDoc.conversationHistory.length - 6;
+    userDoc.conversationHistory.splice(1, toRemove);
+  }
+
+  // Save to DB
+  try {
+    await User.updateOne(
+      { _id: userDoc._id },
+      { $set: { conversationHistory: userDoc.conversationHistory } }
+    );
+  } catch (err) {
+    console.error("Error updating conversationHistory:", err);
+  }
+
+  return userDoc.conversationHistory;
+}
+
+// Direct AI response logic
 async function directAiResponse(
-  userPrompt: string,
+  conversationMessages: ConversationMessage[],
   preferences: string
 ): Promise<string> {
   console.log("🤖 Using direct AI...");
 
+  // Combine the existing conversation with the user preferences.
+  // We'll insert an extra system message containing preferences.
+
+  const messagesForOpenAI = [...conversationMessages];
+
+  // Insert a short system message about the user preferences right after the first system message.
+  // This ensures we preserve the original system message's instructions but also incorporate user prefs.
+
+  if (preferences.trim()) {
+    messagesForOpenAI.splice(1, 0, {
+      role: "system",
+      content: preferences,
+    });
+  }
+
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
-    messages: [
-      {
-        role: "system",
-        content: `
-You are Kristene, a charming and witty AI Sommelier specializing exclusively in wine. 
-- Politely decline or redirect if the user asks about anything not clearly related to wine.
-- Keep the conversation going by asking additional wine-related questions or offering further wine guidance.
-- Always respond professionally and warmly.
-${preferences}
-        `,
-      },
-      { role: "user", content: userPrompt },
-    ],
+    messages: messagesForOpenAI.map((m) => ({ role: m.role, content: m.content })),
   });
 
   return response.choices[0]?.message?.content ?? "No response";
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Perform web search logic (also uses the single top-level openai instance)
-// ──────────────────────────────────────────────────────────────────────────────
+// Perform web search logic
 async function performWebSearch(
-  query: string,
+  conversationMessages: ConversationMessage[],
   preferences: string
 ): Promise<string> {
   console.log("🔍 Using Web Search...");
+
+  // We combine conversation context similarly with the user preferences.
+  const messagesForOpenAI = [...conversationMessages];
+
+  if (preferences.trim()) {
+    messagesForOpenAI.splice(1, 0, {
+      role: "system",
+      content: preferences,
+    });
+  }
+
+  // We'll supply the user's last question as "query".
+  // The last message from the user should be at the end of messagesForOpenAI.
+  const userMessage = messagesForOpenAI.reverse().find((m) => m.role === "user");
+  const query = userMessage?.content || "";
 
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -246,14 +301,7 @@ async function performWebSearch(
         model: "gpt-4o",
         tools: [{ type: "web_search_preview" }],
         tool_choice: { type: "web_search_preview" },
-        input: `
-For the query: "${query}".
-${preferences}
-
-Return results clearly formatted in markdown with store names, brief descriptions, prices, availability, and links. 
-Separate each result with a triple dash (---). 
-Provide no raw HTML.
-`,
+        input: `\nFor the query: "${query}".\n${preferences}\n\nReturn results clearly formatted in markdown with store names, brief descriptions, prices, availability, and links.\nSeparate each result with a triple dash (---).\nProvide no raw HTML.\n`,
         instructions: "Output must be markdown or plain text without raw HTML.",
       }),
     });

@@ -1,33 +1,44 @@
 // models/User.ts
 import { Schema, model, models } from 'mongoose';
 
+const ConversationMessageSchema = new Schema({
+  role: {
+    type: String,
+    enum: ['system', 'user', 'assistant'],
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+});
+
 const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
   membership: { type: String, default: 'basic' },
 
-  // Personal details
-  fullName: { type: String },
-  address: { type: String },
-  city: { type: String },
-  state: { type: String },
-  zip: { type: String },
+  // Personal details...
+  // e.g. fullName, address, zip, etc.
 
-  // Wine preferences (only relevant if membership='premium')
+  // Wine preferences
   winePreferences: {
-    drynessLevel: { type: String }, // e.g. "dry", "semi-sweet", "sweet"
-    favoriteTypes: [{ type: String }], // e.g. ["red", "white", "sparkling"]
-    dislikedFlavors: [{ type: String }], // e.g. ["oaky", "smoky"]
-    budgetRange: { type: String }, // e.g. "$10-15", "$20-30"
-    knowledgeLevel: { type: String }, // e.g. "beginner", "intermediate", "advanced"
+    drynessLevel: { type: String },
+    favoriteTypes: [{ type: String }],
+    dislikedFlavors: [{ type: String }],
+    budgetRange: { type: String },
+    knowledgeLevel: { type: String },
     locationZip: { type: String },
   },
 
-  // Usage tracking for basic (free) plan: limit to 5 queries per day
+  // Usage for basic plan
   usage: {
     count: { type: Number, default: 0 },
-    lastUsed: { type: String, default: '' }, // store a date string like '2025-03-16'
+    lastUsed: { type: String, default: '' },
   },
+
+  // Store conversation as an array of subdocuments
+  conversationHistory: [ConversationMessageSchema],
 });
 
 const User = models.User || model('User', UserSchema);
