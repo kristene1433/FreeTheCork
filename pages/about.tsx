@@ -13,7 +13,7 @@ export default function AboutUsPage() {
         <section className="bg-white shadow-md rounded-lg p-8 md:p-12 lg:flex lg:items-center">
           <div className="lg:w-1/3">
             <Image
-              src="KrissyHeadshot.jpg" // Replace with your image
+              src="public/images/KrissyHeadshot.jpg" // Replace with your image
               alt="Profile Image"
               width={400}
               height={400}
