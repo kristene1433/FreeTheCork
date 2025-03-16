@@ -46,10 +46,11 @@ export default function UpgradePage() {
     try {
       if (plan === "basic") {
         // 1) Downgrade (or remain) to Basic:
-        // Here we call an API route to set membership to 'basic' in DB
         const res = await fetch("/api/account/upgrade", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          // IMPORTANT: include credentials so session cookie is sent
+          credentials: "same-origin",
           body: JSON.stringify({ newPlan: "basic" }),
         });
 
@@ -65,6 +66,7 @@ export default function UpgradePage() {
         // 2) If plan = 'premium', create a Stripe checkout session
         const checkoutRes = await fetch("/api/stripe/create-checkout-session", {
           method: "POST",
+          credentials: "same-origin", // Include cookies here too if you need session
         });
 
         const checkoutData = await checkoutRes.json();

@@ -1,7 +1,8 @@
-// pages/api/account/upgrade.ts
-
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+// Instead of getSession:
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]';
+
 import dbConnect from '../../../lib/mongodb';
 import User from '../../../models/User';
 
@@ -14,8 +15,9 @@ export default async function upgradeHandler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const session = await getSession({ req });
-  const email = session?.user?.email; // Use optional chaining
+  // Use getServerSession to load user session
+  const session = await getServerSession(req, res, authOptions);
+  const email = session?.user?.email;
 
   if (!email) {
     return res.status(401).json({ error: 'Not authenticated or missing email' });
@@ -44,8 +46,7 @@ export default async function upgradeHandler(
 
     // 2) Upgrade to Premium
     if (newPlan === 'premium') {
-      // In a real app, you'd typically rely on your Stripe webhook
-      // or a completed Stripe checkout session. Here, we do it directly:
+      // In a real app, rely on Stripe checkout / webhook. Here, we do it directly
       user.membership = 'premium';
       await user.save();
       return res.status(200).json({
