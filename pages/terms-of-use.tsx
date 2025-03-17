@@ -5,10 +5,12 @@ import Footer from '../components/Footer';
 
 export default function TermsOfUse() {
   return (
-    <div className="min-h-screen bg-black flex flex-col text-white">
+    // Keep bg-black but remove text-white here
+    <div className="min-h-screen bg-black flex flex-col">
       <NavBar />
 
-      <main className="flex-grow container mx-auto px-4 py-12">
+      {/* Here we apply text-white only to the main content */}
+      <main className="flex-grow container mx-auto px-4 py-12 text-white">
         <section className="bg-gray-900 shadow-lg rounded-lg p-8 md:p-12">
           <h1 className="text-4xl font-bold mb-8">Terms of Use</h1>
 
