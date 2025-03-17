@@ -1,10 +1,8 @@
 // components/Footer.tsx
 import React from "react";
-// If you're using Lucide icons:
 import { Twitter, Instagram } from "lucide-react";
 import Link from "next/link";
 
-// Footer with Tailwind styles
 export default function Footer() {
   return (
     <footer className="bg-black text-white py-8">
@@ -20,6 +18,14 @@ export default function Footer() {
           <Link href="/terms">
             <span className="hover:underline">Terms of Use</span>
           </Link>
+          <Link href="/contact">
+            <span className="hover:underline">Contact</span>
+          </Link>
+        </div>
+
+        {/* Center: Copyright */}
+        <div className="text-sm mb-4 md:mb-0">
+          Free the Cork © 2025
         </div>
 
         {/* Right side: social icons */}
@@ -45,4 +51,3 @@ export default function Footer() {
     </footer>
   );
 }
-
