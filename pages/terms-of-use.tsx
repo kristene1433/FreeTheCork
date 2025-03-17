@@ -78,7 +78,7 @@ export default function TermsOfUse() {
           <h2 className="text-xl font-semibold mb-4">11. Contact Us</h2>
           <p>
             If you have questions or concerns about these Terms, please contact us at 
-            <span className="ml-1 underline">support@freethecork.com</span>.
+            <span className="ml-1 underline">info@freethecork.com</span>.
           </p>
         </section>
       </main>
